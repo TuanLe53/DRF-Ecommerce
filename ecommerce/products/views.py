@@ -2,13 +2,14 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import generics
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.pagination import LimitOffsetPagination
 
 from .serializers import CategorySerializer, ProductSerializer
 from .models import Category, Product, ProductImages, Inventory
-
+from .permissions import IsVendor
 from vendors.models import Vendor
+
 # Create your views here.
 class ListCreateCategory(generics.ListCreateAPIView):
     serializer_class = CategorySerializer
@@ -23,13 +24,12 @@ class ListCreateProduct(generics.ListCreateAPIView):
         if self.request.method == "GET":
             self.permission_classes = [AllowAny, ]
         else:
-            self.permission_classes = [IsAuthenticated, ]
+            self.permission_classes = [IsVendor,]
         return super(ListCreateProduct, self).get_permissions()
     
     def post(self, request):
         vendor = get_object_or_404(Vendor, user=request.user)
         category = Category.objects.filter(name=request.data["categories"])
-
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
