@@ -15,23 +15,24 @@ class CategorySerializer(serializers.ModelSerializer):
         return category
 
 
+class InventorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inventory
+        fields = ("quantity", )
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImages
         fields = ("image", )
-        
+
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
-    categories = CategorySerializer(many=True)
-    vendor = serializers.CharField(required=False)
-    inventory = serializers.CharField(required=False)
+    categories = CategorySerializer(many=True, required=False)
+    quantity = serializers.CharField(source="inventory.quantity", read_only=True)
 
     class Meta: 
         model = Product
-        exclude = ("last_modified", )
-        
-class InventorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Inventory
-        fields = ("quantity", )
+        fields = ("id", "name", "slug", "price", "description", "categories", "quantity", "images")
+        extra_kwargs = {
+            "id": {"read_only": True}
+            }
