@@ -43,7 +43,7 @@ class ProductImages(models.Model):
         return f"{self.image.url}"
     
 class Inventory(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="inventory")
     quantity = models.PositiveIntegerField(default=0)
     last_modified = models.DateTimeField(auto_now=True)
 
