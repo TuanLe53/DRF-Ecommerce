@@ -1,10 +1,12 @@
-from rest_framework.generics import CreateAPIView, ListCreateAPIView
+from rest_framework.generics import CreateAPIView, ListCreateAPIView, ListAPIView, DestroyAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from django.shortcuts import get_object_or_404
+
 from .models import Customer, Cart, CartItem
 from .serializers import CustomerSerializer, CartSerializer, CartItemSerializer
-from .permissions import IsCustomer
+from .permissions import IsCustomer, IsCartOwner
 
 # Create your views here.
 class CreateCustomer(CreateAPIView):
@@ -33,3 +35,16 @@ class CreateCartItem(CreateAPIView):
     serializer_class = CartItemSerializer
     permission_classes = (IsCustomer, )
     
+class ListCartItem(ListAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    permission_classes = (IsCartOwner, )
+    
+    def get_queryset(self):
+        cart = get_object_or_404(Cart, id=self.kwargs["pk"])
+        return CartItem.objects.filter(cart=cart)
+    
+class DeleteCartItem(DestroyAPIView):
+    queryset = CartItem.objects.all()
+    serializer_class = CartItemSerializer
+    permission_classes = (IsCartOwner, )
