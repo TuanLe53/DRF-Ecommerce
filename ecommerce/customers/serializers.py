@@ -1,7 +1,10 @@
 from rest_framework import serializers
-from .models import Customer, Cart
+from django.shortcuts import get_object_or_404
+
+from .models import Customer, Cart, CartItem
 from users.serializers import UserSerializer
 from users.models import CustomUser
+from products.models import Product
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -23,3 +26,23 @@ class CartSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "status": {"required": False}
             }
+        
+class CartItemSerializer(serializers.ModelSerializer):
+    cart = serializers.CharField()
+    product = serializers.CharField()
+    
+    class Meta:
+        model = CartItem
+        fields = "__all__"
+        
+    def create(self, validated_data) -> CartItem:
+        cart = get_object_or_404(Cart, id=validated_data["cart"])
+        product = get_object_or_404(Product, id=validated_data["product"])
+        
+        cart_item = CartItem.objects.create(
+            cart=cart,
+            product=product,
+            quantity=validated_data["quantity"]
+        )
+        
+        return cart_item
