@@ -5,9 +5,26 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from PIL import Image
 from io import BytesIO
 
-register_payload = {
+customer_payload = {
 	"user":{
-		"email": "email@gmail.com",
+		"email": "customer@gmail.com",
+		"password": "password",
+		"first_name": "first",
+		"last_name": "last",
+		"user_type": "CUSTOMER"
+	},
+	"address": "123 Street",
+	"city": "Vancouver",
+	"phone_number": "0909090909"
+}
+customer_login={
+    "email": "customer@gmail.com",
+    "password": "password"
+}
+
+vendor_register = {
+	"user":{
+		"email": "vendor@gmail.com",
 		"password": "password",
 		"first_name": "first",
 		"last_name": "last",
@@ -19,13 +36,19 @@ register_payload = {
 	"city": "Vancouver",
 	"phone_number": "0909090909"
 	}
-login_payload = {
-		"email": "email@gmail.com",
+vendor_login = {
+		"email": "vendor@gmail.com",
 		"password": "password",
     }
 def prep_user(client) -> None:
-    register = client.post(reverse("vendor_register"), data=register_payload, format="json")
-    login = client.post(reverse("login"), data=login_payload, format="json")
+    client.post(reverse("vendor_register"), data=vendor_register, format="json")
+    login = client.post(reverse("login"), data=vendor_login, format="json")
+    access_token = login.data["access"]
+    client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
+    
+def prep_customer(client) -> None:
+    client.post(reverse("customer_register"), data=customer_payload, format="json")
+    login = client.post(reverse("login"), data=customer_login, format="json")
     access_token = login.data["access"]
     client.credentials(HTTP_AUTHORIZATION=f"Bearer {access_token}")
     
