@@ -1,5 +1,7 @@
+import uuid
 from django.db import models
 from users.models import CustomUser
+from products.models import Product
 from phonenumber_field.modelfields import PhoneNumberField
 from django.utils.translation import gettext_lazy as _
 
@@ -13,3 +15,22 @@ class Customer(models.Model):
 
     def __str__(self) -> str:
         return self.user.email
+    
+class Cart(models.Model):
+    STATUS_CHOICES = (
+        ("OPEN", "Open"),
+        ("CLOSE", "Close"),
+    )
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="cart")
+    status = models.CharField(choices=STATUS_CHOICES, max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+class CartItem(models.Model):
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
