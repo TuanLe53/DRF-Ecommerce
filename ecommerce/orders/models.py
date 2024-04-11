@@ -21,7 +21,7 @@ class Order(models.Model):
     customer = models.ForeignKey(Customer, related_name="orders", on_delete=models.CASCADE)
     address = models.CharField(null=False, blank=False)
     payment_type = models.CharField(choices=PAYMENT_TYPE, max_length=12)
-    payment = models.ForeignKey(Payment, on_delete=models.PROTECT)
+    payment = models.ForeignKey(Payment, on_delete=models.PROTECT, null=True, blank=True)
     status  = models.CharField(choices=STATUS_CHOICES, max_length=10)
     total_price = models.DecimalField(max_digits=15, decimal_places=3)
     created_at = models.DateTimeField(auto_now_add=True)
