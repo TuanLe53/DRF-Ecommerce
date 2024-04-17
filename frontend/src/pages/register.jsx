@@ -10,7 +10,8 @@ import {
     HStack,
     InputGroup,
     InputRightElement,
-    InputLeftElement
+    InputLeftElement,
+    useToast
 } from "@chakra-ui/react";
 import { PhoneIcon } from "@chakra-ui/icons";
 import { useState } from "react";
@@ -27,8 +28,10 @@ export default function Register() {
         user_type: "",
     });
 
-    const navigation = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
+    
+    const toast = useToast();
+    const navigate = useNavigate();
 
     const handleChangeUserData = (e) => {
         const { name, value } = e.target;
@@ -45,9 +48,11 @@ export default function Register() {
             [name]: value
         })
     }
+
+    const url = userData.user_type === "VENDOR" ? "vendor" : "customer"
     const registerUser = async () => {
         formData.user = userData;
-        const res = await fetch("http://127.0.0.1:8000/customer/new/", {
+        const res = await fetch(`http://127.0.0.1:8000/${url}/new/`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -58,19 +63,38 @@ export default function Register() {
         return data
     }
 
-    const {error, isPending, isSuccess, isError, mutate:DoRegister} = useMutation({
-        mutationFn: registerUser
+    const { isPending, mutate:DoRegister} = useMutation({
+        mutationFn: registerUser,
+        onSuccess: () => {
+            navigate("/login")
+        },
+        onError: (error) => {
+            for (let key of Object.keys(error)) {
+                if (key === "user") {
+                    toast({
+                        title: 'Error',
+                        description: error["user"]["email"],
+                        status: 'error',
+                        duration: 5000,
+                        isClosable: true,
+                    })
+                    continue;
+                }
+                toast({
+                    title: 'Error',
+                    description: error[key][0],
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                })
+            }
+        }
     })
 
     const handleSubmit = (e) => {
         e.preventDefault();
         DoRegister();
     }
-
-    if (isError) console.log("Error", error);
-    if (isSuccess) {
-        navigation("/login")
-    };
 
     return (
         <Flex
@@ -80,7 +104,7 @@ export default function Register() {
             height="100vh"
         >
             <Box p={2} bg="tomato">
-                <Text fontSize="3xl">Register Page</Text>
+                <Text fontSize="3xl">Register</Text>
                 <form onSubmit={handleSubmit}>
 
                     <FormControl isRequired>
