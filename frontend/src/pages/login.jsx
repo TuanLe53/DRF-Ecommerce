@@ -1,9 +1,14 @@
 import { Box, Button, Flex, FormControl, FormLabel, Input, InputGroup, InputRightElement, Text, useToast } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom";
+import AuthContext from "../contexts/AuthContext";
+import { jwtDecode } from "jwt-decode";
+
 
 export default function Login() {
+    const { setAccessToken, setUser } = useContext(AuthContext);
+
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -23,7 +28,7 @@ export default function Login() {
     }
 
     const loginUser = async () => {
-        const res = await fetch("http://127.0.0.1:8000/auth/login/", {
+        const res = await fetch("http://127.0.0.1:8000/user/login/", {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)
@@ -37,7 +42,11 @@ export default function Login() {
 
     const { isPending, mutate: DoLogin } = useMutation({
         mutationFn: loginUser,
-        onSuccess: () => {
+        onSuccess: (data) => {
+            setAccessToken(data.access)
+            setUser(jwtDecode(data.access))
+            localStorage.setItem("accessToken", JSON.stringify(data.access))
+            localStorage.setItem("refreshToken", JSON.stringify(data.refresh))
             navigate("/")
         },
         onError: (error) => {
