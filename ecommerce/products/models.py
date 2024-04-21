@@ -25,7 +25,7 @@ class Product(models.Model):
     price = models.FloatField()
     description = models.TextField(blank=True, null=True)
     
-    category = models.ManyToManyField(Category, related_name='categories')
+    category = models.ManyToManyField(Category, related_name="products")
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, related_name='products')
     
     created_at = models.DateTimeField(auto_now_add=True)
