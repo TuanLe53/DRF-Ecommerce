@@ -1,4 +1,6 @@
 from django.shortcuts import get_object_or_404
+from django.utils.text import slugify
+from django.db import transaction
 
 from rest_framework import generics
 from rest_framework.response import Response
@@ -31,22 +33,36 @@ class ListCreateProduct(generics.ListCreateAPIView):
     
     def post(self, request):
         vendor = get_object_or_404(Vendor, user=request.user)
-        category = Category.objects.filter(name=request.data["categories"])
+        
+        product_slug = slugify(request.data["name"])
+        
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        product = serializer.save(
-            vendor=vendor,
-            category=category
-        )
-        
-        for file in request.FILES.getlist("images"):
-            ProductImages.objects.create(product=product, image=file)
-        
-        Inventory.objects.create(
-            product=product,
-            quantity=request.data["quantity"]    
-        )
+        try:
+            with transaction.atomic():                
+                product = serializer.save(
+                    vendor=vendor,
+                    slug=product_slug
+                )
+
+            for category_name in request.data.getlist("categories"):
+                category = Category.objects.get(name=category_name)
+                product.category.add(category)
+                
+            for file in request.FILES.getlist("images"):
+                ProductImages.objects.create(product=product, image=file)
+            
+            Inventory.objects.create(
+                product=product,
+                quantity=request.data["quantity"]    
+            )
+            
+        except Exception as e:
+            return Response(
+                {"detail": "Error creating product. Please try again later."},
+                status=500
+            )
         
         return Response(
             {
@@ -68,3 +84,13 @@ class RetrieveUpdateDeleteProductByID(generics.RetrieveUpdateDestroyAPIView):
             self.permission_classes = [IsProductOwner, ]
             
         return super(RetrieveUpdateDeleteProductByID, self).get_permissions()
+    
+class ListProductsByID(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [IsProductOwner, ]
+    
+    def get_queryset(self):
+        vendor = get_object_or_404(Vendor, user=self.request.user)
+        products = Product.objects.filter(vendor=vendor)
+        
+        return products
