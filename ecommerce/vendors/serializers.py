@@ -8,7 +8,7 @@ class VendorSerializer(serializers.ModelSerializer):
     
     class Meta: 
         model = Vendor
-        fields = ("user", "address", "city", "phone_number", "shop_name", "description")
+        fields = ("user", "address", "city", "phone_number", "shop_name", "description", "avatar")
         
     def create(self, validated_data) -> Vendor:
         user_data = validated_data.pop("user")
