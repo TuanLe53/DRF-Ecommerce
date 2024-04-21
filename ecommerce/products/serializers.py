@@ -25,10 +25,19 @@ class ProductImageSerializer(serializers.ModelSerializer):
         model = ProductImages
         fields = ("image", )
 
+class CategoryNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ("name", )
+        
+    def to_representation(self, value):
+        return value.name
+
 class ProductSerializer(serializers.ModelSerializer):
     images = ProductImageSerializer(many=True, read_only=True)
-    categories = CategorySerializer(many=True, required=False)
+    categories = CategoryNameSerializer(many=True, read_only=True, source="category")
     quantity = serializers.CharField(source="inventory.quantity", read_only=True)
+    slug = serializers.SlugField(read_only=True)
 
     class Meta: 
         model = Product
