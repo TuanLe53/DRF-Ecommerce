@@ -14,6 +14,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Profile from "./pages/profile.jsx";
 import ProductDetail from "./pages/productDetail.jsx";
+import Product from "./pages/product.jsx";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />
+  },
+  {
+    path: "/product/:product_id",
+    element: <Product />
   },
   {
     path: "/profile",
