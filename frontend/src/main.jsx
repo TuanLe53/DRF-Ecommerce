@@ -13,6 +13,7 @@ import Register from "./pages/register.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Profile from "./pages/profile.jsx";
+import ProductDetail from "./pages/productDetail.jsx";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,14 @@ const router = createBrowserRouter([
     element:(
       <ProtectedRoute>
         <Profile />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: "/product/detail/:id",
+    element: (
+      <ProtectedRoute>
+        <ProductDetail />
       </ProtectedRoute>
     )
   },
