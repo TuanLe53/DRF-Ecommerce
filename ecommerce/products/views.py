@@ -76,6 +76,7 @@ class RetrieveUpdateDeleteProductByID(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     parser_classes = [MultiPartParser]
+    lookup_field = 'slug'
     
     def get_permissions(self):
         if self.request.method == "GET":
