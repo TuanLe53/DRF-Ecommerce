@@ -23,8 +23,7 @@ class Cart(models.Model):
     )
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name="cart")
-    status = models.CharField(choices=STATUS_CHOICES, max_length=6)
+    customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name="cart")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
