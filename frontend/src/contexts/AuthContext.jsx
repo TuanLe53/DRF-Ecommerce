@@ -46,7 +46,8 @@ export function AuthProvider({children}) {
         user,
         setUser,
         accessToken,
-        setAccessToken
+        setAccessToken,
+        logoutUser,
     }
 
     useEffect(() => {
