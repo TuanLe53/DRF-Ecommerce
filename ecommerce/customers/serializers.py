@@ -17,15 +17,14 @@ class CustomerSerializer(serializers.ModelSerializer):
         user_data = validated_data.pop("user")
         user = CustomUser.objects.create_user(**user_data)
         customer = Customer.objects.create(user=user, **validated_data)
+        Cart.objects.create(customer=customer)
         return customer
 
 class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
-        fields = ("id", "status", "created_at", "updated_at")
-        extra_kwargs = {
-            "status": {"required": False}
-            }
+        fields = ("id", "created_at", "updated_at")
+
         
 class CartItemSerializer(serializers.ModelSerializer):
     cart = serializers.CharField()
