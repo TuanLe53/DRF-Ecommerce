@@ -14,26 +14,32 @@ class CreateCustomer(CreateAPIView):
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
     
-class ListCreateCart(ListCreateAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
-    permission_classes = (IsCustomer, )
+# class ListCreateCart(ListCreateAPIView):
+#     queryset = Cart.objects.all()
+#     serializer_class = CartSerializer
+#     permission_classes = (IsCustomer, )
     
-    def post(self, request):
-        customer = Customer.objects.get(user=request.user)
-        cart = Cart.objects.create(
-            customer = customer,
-            status = "OPEN"
-        )
+#     def post(self, request):
+#         customer = Customer.objects.get(user=request.user)
+#         cart = Cart.objects.create(
+#             customer = customer,
+#             status = "OPEN"
+#         )
         
-        serializer = CartSerializer(cart)
+#         serializer = CartSerializer(cart)
         
-        return Response(serializer.data, status=201)
+#         return Response(serializer.data, status=201)
     
 class CreateCartItem(CreateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
     permission_classes = (IsCustomer, )
+    
+    def post(self, request):
+        serializer = CartItemSerializer(data=request.data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=201)
     
 class ListCartItem(ListAPIView):
     queryset = CartItem.objects.all()
