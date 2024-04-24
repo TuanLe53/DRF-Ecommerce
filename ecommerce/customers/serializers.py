@@ -5,6 +5,7 @@ from .models import Customer, Cart, CartItem
 from users.serializers import UserSerializer
 from users.models import CustomUser
 from products.models import Product
+from products.serializers import ProductSerializer
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -26,7 +27,7 @@ class CartSerializer(serializers.ModelSerializer):
         fields = ("id", "created_at", "updated_at")
 
         
-class CartItemSerializer(serializers.ModelSerializer):
+class CreateCartItemSerializer(serializers.ModelSerializer):
     cart = serializers.CharField(required=False)
     product = serializers.CharField()
     
@@ -49,3 +50,11 @@ class CartItemSerializer(serializers.ModelSerializer):
         )
         
         return cart_item
+    
+class GetCartItemSerializer(serializers.ModelSerializer):
+    cart = serializers.CharField()
+    product = ProductSerializer()
+    
+    class Meta:
+        model = CartItem
+        fields = "__all__"
