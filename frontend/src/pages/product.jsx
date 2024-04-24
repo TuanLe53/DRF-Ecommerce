@@ -1,13 +1,90 @@
-import { Stack, Text, Box, Heading, Wrap, WrapItem, Tag, TagLabel, TagRightIcon, Image, Center } from "@chakra-ui/react";
+import {
+    Stack,
+    Text,
+    Box,
+    Heading,
+    Wrap,
+    WrapItem,
+    Tag,
+    TagLabel,
+    TagRightIcon,
+    Image,
+    Center,
+    NumberInput,
+    NumberInputField,
+    NumberIncrementStepper,
+    NumberDecrementStepper,
+    NumberInputStepper,
+    HStack,
+    Button,
+    FormControl,
+    useToast,
+    FormErrorMessage
+} from "@chakra-ui/react";
 import { TagFilled } from "@ant-design/icons";
 import Slider from "react-slick";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { VNDDong } from "../utils/VNDDongFormat";
+import { useContext, useState } from "react";
+import AuthContext from "../contexts/AuthContext";
 
 export default function Product() {
-    
+    const { accessToken } = useContext(AuthContext);
     const { product_id } = useParams();
+
+    const toast = useToast();
+
+    const [quantity, setQuantity] = useState(0);
+
+    const { isPending:AddPending, mutate:AddToCart } = useMutation({
+        mutationFn: async () => {
+            let formData = {
+                quantity: quantity,
+                product: product.id
+            }
+
+            const res = await fetch("http://127.0.0.1:8000/customer/cart/items/", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${String(accessToken)}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+
+            const data = await res.json();
+            if (res.status !== 201) throw data;
+
+            return data
+        },
+        onSuccess: () => {
+            setQuantity(0)
+            toast({
+                title: 'Success',
+                description: "Added to cart",
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            })
+        },
+        onError: () => {
+            toast({
+                title: 'Error',
+                description: "Something went wrong. Please try again later.",
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            })
+        }
+    })
+
+    const isQuantityValid = quantity < 1;
+    const handleClick = async (e) => {
+        e.preventDefault()
+        if (isQuantityValid) return;
+        AddToCart()
+    }
 
     const fetchProduct = async () => {
         let res = await fetch(`http://127.0.0.1:8000/products/${product_id}`)
@@ -21,7 +98,6 @@ export default function Product() {
         queryFn: fetchProduct,
     });
 
-    if (product) console.log(product);
     if (isPending) return "Loading";
     if (error) return "An error has occurred";
 
@@ -39,7 +115,7 @@ export default function Product() {
                 </div>
             </Center>
 
-            <Box w="50%" bg="red">
+            <Box w="50%" bg="teal">
                 <Heading>{product.name}</Heading>
                 <Text>{VNDDong.format(product.price)}</Text>
                 <Text>In stock: {product.quantity}</Text>
@@ -55,6 +131,24 @@ export default function Product() {
                     ))}
                 </Wrap>
                 <Text>Description: {product.description}</Text>
+
+                <form onSubmit={handleClick}>
+                    <HStack>
+                        <FormControl isRequired isInvalid={isQuantityValid}>
+                            <NumberInput value={quantity} min={1} max={product.quantity} onChange={(value) => setQuantity(value)}>
+                                <NumberInputField />
+                                <NumberInputStepper>
+                                    <NumberIncrementStepper />
+                                    <NumberDecrementStepper />
+                                </NumberInputStepper>
+                            </NumberInput>
+                            {isQuantityValid &&
+                                <FormErrorMessage>Quantity need to bigger than 0</FormErrorMessage>
+                            }
+                        </FormControl>
+                        <Button isLoading={AddPending} type="submit">Add to cart</Button>
+                    </HStack>
+                </form>
             </Box>
         </Stack>
     )
