@@ -17,10 +17,6 @@ class Customer(models.Model):
         return self.user.email
     
 class Cart(models.Model):
-    STATUS_CHOICES = (
-        ("OPEN", "Open"),
-        ("CLOSE", "Close"),
-    )
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     customer = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name="cart")
