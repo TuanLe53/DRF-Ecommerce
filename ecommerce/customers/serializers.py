@@ -27,7 +27,7 @@ class CartSerializer(serializers.ModelSerializer):
 
         
 class CartItemSerializer(serializers.ModelSerializer):
-    cart = serializers.CharField()
+    cart = serializers.CharField(required=False)
     product = serializers.CharField()
     
     class Meta:
@@ -35,8 +35,12 @@ class CartItemSerializer(serializers.ModelSerializer):
         fields = "__all__"
         
     def create(self, validated_data) -> CartItem:
-        cart = get_object_or_404(Cart, id=validated_data["cart"])
+        customer = get_object_or_404(Customer, user=self.context.get("request").user)
+        cart = get_object_or_404(Cart, customer=customer)
         product = get_object_or_404(Product, id=validated_data["product"])
+        
+        if validated_data["quantity"] <= 0:
+            raise serializers.ValidationError("Quantity must be greater than 0.")
         
         cart_item = CartItem.objects.create(
             cart=cart,
