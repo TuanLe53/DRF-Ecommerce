@@ -41,7 +41,7 @@ class CreateCartItemSerializer(serializers.ModelSerializer):
         product = get_object_or_404(Product, id=validated_data["product"])
         
         if validated_data["quantity"] <= 0:
-            raise serializers.ValidationError("Quantity must be greater than 0.")
+            raise serializers.ValidationError({"error": "Quantity must be greater than 0."})
         
         cart_item = CartItem.objects.create(
             cart=cart,
