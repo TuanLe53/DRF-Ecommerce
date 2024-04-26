@@ -8,6 +8,8 @@ from .models import Customer, Cart, CartItem
 from .serializers import CustomerSerializer, CreateCartItemSerializer, GetCartItemSerializer
 from .permissions import IsCustomer, IsCartOwner
 
+from products.models import Product
+
 # Create your views here.
 class CreateCustomer(CreateAPIView):
     permission_classes = (AllowAny, )
@@ -36,6 +38,13 @@ class ListCreateCartItem(ListCreateAPIView):
         return CartItem.objects.filter(cart=cart)
     
     def post(self, request):
+        
+        customer = get_object_or_404(Customer, user=request.user)
+        cart = get_object_or_404(Cart, customer=customer)
+        product = get_object_or_404(Product, id=request.data.get("product"))
+        if CartItem.objects.filter(cart=cart, product=product).exists():
+            return Response({"error": "Item already exists in the cart."}, status=409)
+        
         serializer = CreateCartItemSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
