@@ -30,7 +30,7 @@ import { useContext, useState } from "react";
 import AuthContext from "../contexts/AuthContext";
 
 export default function Product() {
-    const { accessToken } = useContext(AuthContext);
+    const { accessToken, user } = useContext(AuthContext);
     const { product_id } = useParams();
 
     const toast = useToast();
@@ -44,7 +44,7 @@ export default function Product() {
                 product: product.id
             }
 
-            const res = await fetch("http://127.0.0.1:8000/customer/cart/items/", {
+            const res = await fetch("http://127.0.0.1:8000/customer/cart/", {
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${String(accessToken)}`,
@@ -68,10 +68,10 @@ export default function Product() {
                 isClosable: true,
             })
         },
-        onError: () => {
+        onError: (error) => {
             toast({
                 title: 'Error',
-                description: "Something went wrong. Please try again later.",
+                description: error.error,
                 status: 'error',
                 duration: 5000,
                 isClosable: true,
@@ -132,23 +132,27 @@ export default function Product() {
                 </Wrap>
                 <Text>Description: {product.description}</Text>
 
-                <form onSubmit={handleClick}>
-                    <HStack>
-                        <FormControl isRequired isInvalid={isQuantityValid}>
-                            <NumberInput value={quantity} min={1} max={product.quantity} onChange={(value) => setQuantity(value)}>
-                                <NumberInputField />
-                                <NumberInputStepper>
-                                    <NumberIncrementStepper />
-                                    <NumberDecrementStepper />
-                                </NumberInputStepper>
-                            </NumberInput>
-                            {isQuantityValid &&
-                                <FormErrorMessage>Quantity need to bigger than 0</FormErrorMessage>
-                            }
-                        </FormControl>
-                        <Button isLoading={AddPending} type="submit">Add to cart</Button>
-                    </HStack>
-                </form>
+                {user === null ?
+                    <Text>You need to login to continue shopping.</Text>
+                    :
+                    <form onSubmit={handleClick}>
+                        <HStack>
+                            <FormControl isRequired isInvalid={isQuantityValid}>
+                                <NumberInput value={quantity} min={1} max={product.quantity} onChange={(value) => setQuantity(value)}>
+                                    <NumberInputField />
+                                    <NumberInputStepper>
+                                        <NumberIncrementStepper />
+                                        <NumberDecrementStepper />
+                                    </NumberInputStepper>
+                                </NumberInput>
+                                {isQuantityValid &&
+                                    <FormErrorMessage>Quantity need to bigger than 0</FormErrorMessage>
+                                }
+                            </FormControl>
+                            <Button isLoading={AddPending} type="submit">Add to cart</Button>
+                        </HStack>
+                    </form>
+            }
             </Box>
         </Stack>
     )
