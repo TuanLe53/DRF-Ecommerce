@@ -47,7 +47,7 @@ export default function Login() {
             setUser(jwtDecode(data.access))
             localStorage.setItem("accessToken", JSON.stringify(data.access))
             localStorage.setItem("refreshToken", JSON.stringify(data.refresh))
-            navigate("/")
+            navigate(-1)
         },
         onError: (error) => {
             toast({
