@@ -22,7 +22,7 @@ export default function Layout() {
         <>
             <Center bg="teal">
                 <Flex w={"80%"}>
-                    <Heading>Ecommerce</Heading>
+                    <Heading onClick={() => navigate("/")} cursor={"pointer"}>Ecommerce</Heading>
                     <Spacer />
                     {user === null ?                        
                         <HStack>
