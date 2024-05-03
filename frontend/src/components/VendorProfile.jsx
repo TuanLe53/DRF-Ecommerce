@@ -46,7 +46,7 @@ import CategorySelector from "./CategorySelector";
 import { useState, useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
 import { AddIcon, InfoIcon, DeleteIcon, CloseIcon } from "@chakra-ui/icons";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { VNDDong } from "../utils/VNDDongFormat";
 import { EllipsisOutlined } from "@ant-design/icons";
 
@@ -70,7 +70,7 @@ export default function VendorProfile() {
 
 function ProductTab() {
     const { accessToken } = useContext(AuthContext);
-    
+    const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
     const fetchProducts = async () => {
@@ -126,7 +126,7 @@ function ProductTab() {
                                         size={"xs"}
                                     />
                                     <MenuList>
-                                        <MenuItem icon={<InfoIcon />}><Link to={`/product/detail/${product.id}`}>Detail</Link></MenuItem>
+                                        <MenuItem icon={<InfoIcon />} onClick={() => navigate(`/product/detail/${product.id}`)}>Detail</MenuItem>
                                         <MenuItem icon={<DeleteIcon />}>Delete</MenuItem>
                                     </MenuList>
                                 </Menu>
