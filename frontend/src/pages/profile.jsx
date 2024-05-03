@@ -33,32 +33,38 @@ export default function Profile() {
     if (error) return 'An error has occurred';
 
     return (
-        <HStack spacing={"40px"}>
-                    <Box w="30%" bg="cyan">
-                        <Center>
-                            <Avatar size={"2xl"} src={data.avatar} />
-                        </Center>
-                        <Center>
-                            <Text>{data.user.user_type === "VENDOR"? data.shop_name : `${data.user.first_name} ${data.user.last_name}`}</Text>
-                        </Center>
-                        <HStack>
-                            <EmailIcon />
-                            <Text>{data.user.email}</Text>
-                        </HStack>
-                        <HStack>
-                            <PhoneIcon />
-                            <Text>{data.phone_number}</Text>
-                        </HStack>
-                        <Text>{data.city}</Text>
-                        <Text>{data.address}</Text>
-                    </Box>
-                    <Box w="70%" p={2} bg="palegreen">
-                        {data.user.user_type === "CUSTOMER" ?
-                            <CustomerProfile />
-                        :
-                            <VendorProfile />
-                    }   
-                    </Box>
+        <HStack spacing={"40px"} align={"start"}>
+            <Box w="30%" bg="cyan" p={"10px"}>
+                <Center>
+                    <Avatar size={"2xl"} src={data.avatar} />
+                </Center>
+                <Center>
+                    <Text>{data.user.user_type === "VENDOR"? data.shop_name : `${data.user.first_name} ${data.user.last_name}`}</Text>
+                </Center>
+                <HStack>
+                    <EmailIcon />
+                    <Text>{data.user.email}</Text>
+                </HStack>
+                <HStack>
+                    <PhoneIcon />
+                    <Text>{data.phone_number}</Text>
+                </HStack>
+                <HStack>
+                    <ion-icon name="location"></ion-icon>
+                    <Text>{data.city}</Text>
+                </HStack>
+                <HStack>
+                    <ion-icon name="pin"></ion-icon>
+                    <Text>{data.address}</Text>
+                </HStack>
+            </Box>
+            <Box w="70%" p={2} bg="palegreen">
+                {data.user.user_type === "CUSTOMER" ?
+                    <CustomerProfile />
+                :
+                    <VendorProfile />
+            }   
+            </Box>
         </HStack>
     )
 }
