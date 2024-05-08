@@ -6,7 +6,8 @@ from django.shortcuts import get_object_or_404
 
 from .serializers import OrderSerializer
 from .models import Order, OrderItem
-from customers.models import Customer
+
+from customers.models import Customer, Cart, CartItem
 from payments.models import Payment
 from products.models import Product
 # Create your views here.
@@ -21,8 +22,11 @@ class ListCreateOrder(generics.ListCreateAPIView):
     
     def post(self, request):
         customer = get_object_or_404(Customer, user=self.request.user)
+        cart = get_object_or_404(Cart, customer=customer)
         
-        if request.data["payment_type"] == "CREDIT_CARD":
+        if request.data["payment_type"] == "COD":
+            payment = None
+        elif request.data["payment_type"] == "CREDIT_CARD":
             payment = get_object_or_404(Payment, id=request.data["payment"])
         
         order = Order.objects.create(
@@ -41,7 +45,10 @@ class ListCreateOrder(generics.ListCreateAPIView):
             pd = Product.objects.get(id=item["product_id"])
             price = pd.price * item["quantity"]
             
-            order_pd = OrderItem.objects.create(
+            #Remove product from cart
+            CartItem.objects.filter(cart=cart, product=pd).delete()
+            
+            OrderItem.objects.create(
                 product=pd,
                 order=order,
                 quantity=item["quantity"],
