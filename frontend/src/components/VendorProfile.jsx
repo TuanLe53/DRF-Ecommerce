@@ -47,7 +47,7 @@ import { useState, useContext } from "react";
 import AuthContext from "../contexts/AuthContext";
 import { AddIcon, InfoIcon, DeleteIcon, CloseIcon } from "@chakra-ui/icons";
 import { useNavigate, Link } from "react-router-dom";
-import { VNDDong } from "../utils/VNDDongFormat";
+import { VNDDong } from "../utils/priceUtils";
 import { EllipsisOutlined } from "@ant-design/icons";
 
 export default function VendorProfile() {

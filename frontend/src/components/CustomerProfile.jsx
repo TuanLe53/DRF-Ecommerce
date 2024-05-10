@@ -35,7 +35,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import AuthContext from "../contexts/AuthContext";
-import {VNDDong} from "../utils/VNDDongFormat"
+import { totalPrice } from "../utils/priceUtils";
 import { useBoundStore } from "../store/store";
 import CartItem from "./CartItem";
 
@@ -89,22 +89,12 @@ function CartTab() {
     if (isPending) return "Loading";
     if (error) return "An error has occurred";
 
-    const totalEstimate = () => {
-        let total = 0;
-
-        for (let i = 0; i < cartItems.length; i++){
-            total += cartItems[i].quantity * cartItems[i].product.price
-        }
-        
-        return total
-    }
-
     return (
         <>
             {cartItems.map((item, i) => (
                 <CartItem key={i} item={item}/>
             ))}
-            <Text textAlign={"right"}>Total: {VNDDong.format(totalEstimate())}</Text>
+            <Text textAlign={"right"}>Total: {totalPrice(cartItems)}</Text>
             <Button isDisabled={cartItems.length === 0} onClick={() => navigate("/orders/new")} float={"right"}>Place Order</Button>
         </>
     )

@@ -19,7 +19,7 @@ import {
     useDisclosure,
     useToast
 } from "@chakra-ui/react";
-import { VNDDong } from "../utils/VNDDongFormat";
+import { VNDDong } from "../utils/priceUtils";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { useMutation } from "@tanstack/react-query";
 import { useContext } from "react";
