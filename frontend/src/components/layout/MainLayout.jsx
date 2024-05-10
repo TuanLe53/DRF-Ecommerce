@@ -11,9 +11,9 @@ import {
 import { useContext } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { UserOutlined, ShoppingCartOutlined, LogoutOutlined } from "@ant-design/icons";
-import AuthContext from "../contexts/AuthContext";
+import AuthContext from "../../contexts/AuthContext";
 
-export default function Layout() {
+export default function MainLayout() {
     const { user, logoutUser } = useContext(AuthContext);
 
     const navigate = useNavigate();
