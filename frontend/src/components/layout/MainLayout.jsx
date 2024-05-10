@@ -22,7 +22,9 @@ export default function MainLayout() {
         <>
             <Center bg="teal">
                 <Flex w={"80%"}>
-                    <Heading onClick={() => navigate("/")} cursor={"pointer"}>Ecommerce</Heading>
+                    <Link to={"/"}>
+                        <Heading>Ecommerce</Heading>
+                    </Link>
                     <Spacer />
                     {user === null ?                        
                         <HStack>
