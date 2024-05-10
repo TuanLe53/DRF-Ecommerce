@@ -15,25 +15,19 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Profile from "./pages/profile.jsx";
 import ProductDetail from "./pages/productDetail.jsx";
 import Product from "./pages/product.jsx";
-import Layout from "./components/Layout.jsx";
+import MainLayout from "./components/layout/MainLayout.jsx";
+import PlaceOrder from "./pages/placeOrder.jsx";
+import AuthenticationLayout from "./components/layout/AuthenticationLayout.jsx";
 
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
+    element: <MainLayout />,
     children: [
       {
         path: "/",
         element: <Home />
-      },
-      {
-        path: "/login",
-        element: <Login />
-      },
-      {
-        path: "/register",
-        element: <Register />
       },
       {
         path: "/product/:product_id",
@@ -54,6 +48,27 @@ const router = createBrowserRouter([
             <ProductDetail />
           </ProtectedRoute>
         )
+      },
+      {
+        path: "/orders/new",
+        element: (
+          <ProtectedRoute>
+            <PlaceOrder />
+          </ProtectedRoute>
+        )
+      }
+    ]
+  },
+  {
+    element: <AuthenticationLayout />,
+    children: [
+      {
+        path: "/login",
+        element: <Login />
+      },
+      {
+        path: "/register",
+        element: <Register />
       },
     ]
   },
