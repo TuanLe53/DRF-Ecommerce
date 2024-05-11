@@ -25,7 +25,7 @@ import { TagFilled } from "@ant-design/icons";
 import Slider from "react-slick";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { VNDDong } from "../utils/VNDDongFormat";
+import { VNDDong } from "../utils/priceUtils";
 import { useContext, useState } from "react";
 import AuthContext from "../contexts/AuthContext";
 
