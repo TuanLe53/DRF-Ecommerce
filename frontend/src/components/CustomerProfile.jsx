@@ -29,15 +29,19 @@ import {
     FormHelperText,
     CardHeader,
     CardBody,
-    Heading
+    Heading,
+    Divider,
+    Flex,
+    Spacer
 } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import AuthContext from "../contexts/AuthContext";
-import { totalPrice } from "../utils/priceUtils";
+import { VNDDong, totalPrice } from "../utils/priceUtils";
 import { useBoundStore } from "../store/store";
 import CartItem from "./CartItem";
+import { formatDate } from "../utils/dateUtils";
 
 export default function CustomerProfile() {
 
@@ -263,11 +267,38 @@ function OrderTab() {
     })
 
     if (data) console.log(data);
-    if (error) console.log(error);
+    if (isPending) return "Loading";
+    if (error) return "An error has occurred";
 
     return (
         <>
-            <p>Pyament Hehehehe</p>
+            {data?.map((order, i) => (
+                <Card key={i} mb={"5px"}>
+                    <CardHeader pb={3}>
+                        <Flex>
+                            <Heading size="md">#{order.id}</Heading>
+                            <Spacer />
+                            <Text
+                                color={
+                                    order.status === "DELIVERING" ? "#FFA500"
+                                    :
+                                    order.status === "RECEIVED" ? "green"
+                                    :
+                                    "black"
+                                }
+                            >
+                                {order.status}
+                            </Text>
+                        </Flex>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody pt={2}>
+                        <Text>Order date: {formatDate(order.created_at)}</Text>
+                        <Text>Payment type: {order.payment_type}</Text>
+                        <Text>Total: {VNDDong.format(order.total_price)}</Text>
+                    </CardBody>
+                </Card>
+            ))}
         </>
     )
 }
