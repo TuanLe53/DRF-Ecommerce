@@ -54,7 +54,7 @@ export default function MainLayout() {
                 }
                 </Flex>
             </Center>
-            <Container maxW={"80%"} height={"100vh"} pt={5} bg="tomato">
+            <Container maxW={"80%"} minH={"100vh"} py={5} bg="tomato">
                 <Outlet />
             </Container>
         </>
