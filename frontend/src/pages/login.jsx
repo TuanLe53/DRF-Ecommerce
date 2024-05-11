@@ -1,7 +1,17 @@
-import { Box, Button, Flex, FormControl, FormLabel, Input, InputGroup, InputRightElement, Text, useToast } from "@chakra-ui/react";
+import { Box,
+    Button,
+    Flex,
+    FormControl,
+    FormLabel,
+    Input,
+    InputGroup,
+    InputRightElement,
+    Text,
+    useToast
+} from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useContext, useState } from "react"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthContext from "../contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
 
@@ -66,48 +76,48 @@ export default function Login() {
     }
 
     return (
-        <Flex
-            direction="column"
-            align="center"
-            justify="center"
-            height="100vh"
-        >
-            <Box p={2} bg="tomato">
-                <Text fontSize="3xl">Login</Text>
+        <Box p={2} w={"50%"} mt={"30%"}>
+            <Text fontSize="3xl" textAlign={"center"}>Login</Text>
 
-                <form onSubmit={handleSubmit}>
-                    
-                    <FormControl isRequired>
-                        <FormLabel>Email</FormLabel>
-                        <Input name="email" onChange={handChange} type="email" placeholder="Enter your email" />
-                    </FormControl>
+            <form onSubmit={handleSubmit}>
+                
+                <FormControl isRequired>
+                    <FormLabel>Email</FormLabel>
+                    <Input name="email" onChange={handChange} type="email" placeholder="Enter your email" />
+                </FormControl>
 
-                    <FormControl isRequired>
-                        <FormLabel>Password</FormLabel>
-                        <InputGroup>
-                            <Input
-                                name="password"
-                                onChange={handChange}
-                                placeholder="Enter your password"
-                                type={showPassword ? "text" : "password"}
-                            />
-                            <InputRightElement>
-                                <Button onClick={() => setShowPassword(!showPassword)}>
-                                    {showPassword ? "Hide" : "Show"}
-                                </Button>
-                            </InputRightElement>
-                        </InputGroup>
-                    </FormControl>
+                <FormControl isRequired>
+                    <FormLabel>Password</FormLabel>
+                    <InputGroup>
+                        <Input
+                            name="password"
+                            onChange={handChange}
+                            placeholder="Enter your password"
+                            type={showPassword ? "text" : "password"}
+                        />
+                        <InputRightElement w={"3.5rem"}>
+                            <Button h={"2rem"} size={"sm"} onClick={() => setShowPassword(!showPassword)}>
+                                {showPassword ? "Hide" : "Show"}
+                            </Button>
+                        </InputRightElement>
+                    </InputGroup>
+                </FormControl>
 
-                    <Button
-                        type="submit"
-                        colorScheme="red"
-                        isLoading={isPending}
-                    >
-                        Login
-                    </Button>
-                </form>
-            </Box>
-        </Flex>
+                <Button
+                    type="submit"
+                    colorScheme="red"
+                    isLoading={isPending}
+                    w="100%"
+                    mt={"10px"}
+                >
+                    Login
+                </Button>
+            </form>
+            <Text textAlign={"right"}>
+                <Link to={"/register"}>
+                    Register
+                </Link>
+            </Text>
+        </Box>
     )
 }
