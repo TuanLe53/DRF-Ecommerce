@@ -194,7 +194,7 @@ function PaymentTab() {
                 :
                 <Box>
                     {payments.map((payment, i) => (
-                        <Card key={i}>
+                        <Card key={i} mb={"5px"}>
                             <CardHeader>
                                 <Heading>{payment.id}</Heading>
                             </CardHeader>
