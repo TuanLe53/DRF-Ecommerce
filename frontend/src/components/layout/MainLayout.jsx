@@ -20,7 +20,7 @@ export default function MainLayout() {
 
     return (
         <>
-            <Center bg="teal">
+            <Center bg="teal" py={"5px"}>
                 <Flex w={"80%"}>
                     <Link to={"/"}>
                         <Heading>Ecommerce</Heading>
