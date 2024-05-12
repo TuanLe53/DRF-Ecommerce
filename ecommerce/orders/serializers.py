@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Order
+from .models import Order, OrderItem
+
+from products.serializers import ProductBasicInfoSerializer
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -8,3 +10,10 @@ class OrderSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "address": {"read_only": True}
         }
+        
+class OrderItemSerializer(serializers.ModelSerializer):
+    product = ProductBasicInfoSerializer()
+    
+    class Meta:
+        model = OrderItem
+        fields = "__all__"
