@@ -3,13 +3,15 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
-from .serializers import OrderSerializer
+from .serializers import OrderSerializer, OrderItemSerializer
 from .models import Order, OrderItem
 
 from customers.models import Customer, Cart, CartItem
 from payments.models import Payment
 from products.models import Product
+from vendors.models import Vendor
 # Create your views here.
 class ListCreateOrder(generics.ListCreateAPIView):
     queryset = Order.objects.all()
@@ -62,4 +64,11 @@ class ListCreateOrder(generics.ListCreateAPIView):
         serializer = OrderSerializer(order)
         
         return Response(serializer.data, status=201)
-            
+
+class ListOrderItem(generics.ListAPIView):
+    serializer_class = OrderItemSerializer
+    permission_classes = (IsAuthenticated, )
+    
+    def get_queryset(self):
+        vendor = get_object_or_404(Vendor, user=self.request.user)
+        return OrderItem.objects.filter(Q(product__vendor=vendor))
