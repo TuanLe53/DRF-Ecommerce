@@ -46,3 +46,14 @@ class ProductSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "id": {"read_only": True}
             }
+        
+class ProductBasicInfoSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField("get_image")
+    
+    class Meta:
+        model = Product
+        fields = ("id", "name", "price", "image", "slug")
+        
+    def get_image(self, obj):
+        image = obj.images.first()
+        return "http://127.0.0.1:8000/media/" + str(image.image)
