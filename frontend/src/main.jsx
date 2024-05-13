@@ -15,9 +15,9 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Profile from "./pages/profile.jsx";
 import ProductDetail from "./pages/productDetail.jsx";
 import Product from "./pages/product.jsx";
-import MainLayout from "./components/layout/MainLayout.jsx";
+import MainLayout from "./components/layouts/MainLayout.jsx";
 import PlaceOrder from "./pages/placeOrder.jsx";
-import AuthenticationLayout from "./components/layout/AuthenticationLayout.jsx";
+import AuthenticationLayout from "./components/layouts/AuthenticationLayout.jsx";
 
 const queryClient = new QueryClient();
 
