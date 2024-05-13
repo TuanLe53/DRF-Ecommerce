@@ -31,7 +31,7 @@ import AuthContext from "../contexts/AuthContext";
 
 export default function Product() {
     const { accessToken, user } = useContext(AuthContext);
-    const { product_id } = useParams();
+    const { slug } = useParams();
 
     const toast = useToast();
 
@@ -87,7 +87,7 @@ export default function Product() {
     }
 
     const fetchProduct = async () => {
-        let res = await fetch(`http://127.0.0.1:8000/products/${product_id}`)
+        let res = await fetch(`http://127.0.0.1:8000/products/${slug}`)
         let data = await res.json()
 
         return data
