@@ -13,7 +13,11 @@ class OrderSerializer(serializers.ModelSerializer):
         
 class OrderItemSerializer(serializers.ModelSerializer):
     product = ProductBasicInfoSerializer()
+    order_status = serializers.SerializerMethodField("get_order_status")
     
     class Meta:
         model = OrderItem
         fields = "__all__"
+        
+    def get_order_status(self, obj):
+        return obj.order.status
