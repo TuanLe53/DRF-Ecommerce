@@ -97,7 +97,9 @@ function ProductTab() {
 
     return (
         <Box>
-            <Button onClick={onOpen} leftIcon={<AddIcon />}>Add</Button>
+            <Flex justify={"flex-end"} mb={"5px"}>
+                <Button onClick={onOpen} leftIcon={<AddIcon />}>Add</Button>
+            </Flex>
             <Box>
                 {data.length === 0 ?
                     <Text>You have zero products</Text>
