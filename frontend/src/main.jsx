@@ -11,7 +11,7 @@ import Home from "./pages/home.jsx";
 import Login from "./pages/login.jsx";
 import Register from "./pages/register.jsx";
 import { AuthProvider } from "./contexts/AuthContext.jsx";
-import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ProtectedRoute from "./components/routes/ProtectedRoute.jsx";
 import Profile from "./pages/profile.jsx";
 import ProductDetail from "./pages/productDetail.jsx";
 import Product from "./pages/product.jsx";
