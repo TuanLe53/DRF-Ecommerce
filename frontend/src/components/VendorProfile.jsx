@@ -39,7 +39,9 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
     FormErrorMessage,
-    ModalFooter
+    ModalFooter,
+    HStack,
+    Flex
 } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import CategorySelector from "./CategorySelector";
@@ -49,6 +51,7 @@ import { AddIcon, InfoIcon, DeleteIcon, CloseIcon } from "@chakra-ui/icons";
 import { useNavigate, Link } from "react-router-dom";
 import { VNDDong } from "../utils/priceUtils";
 import { EllipsisOutlined } from "@ant-design/icons";
+import { formatDate } from "../utils/dateUtils";
 
 export default function VendorProfile() {
     
@@ -56,13 +59,15 @@ export default function VendorProfile() {
         <Tabs isLazy isFitted variant={"enclosed"} size={"lg"}>
             <TabList>
                 <Tab><Icon as={ShopOutlined} /> Products</Tab>
-                <Tab><Icon as={ShoppingOutlined} /> Orders</Tab>
+                <Tab><Icon as={ShoppingOutlined} /> Order Items</Tab>
             </TabList>
             <TabPanels>
                 <TabPanel>
                     <ProductTab />
                 </TabPanel>
-                <TabPanel><p>Orders</p></TabPanel>
+                <TabPanel>
+                    <OrderItemTab />
+                </TabPanel>
             </TabPanels>
         </Tabs>
     )
@@ -339,5 +344,69 @@ function AddProductModal({ onClose }) {
             </ModalFooter>
 
         </form>
+    )
+}
+
+function OrderItemTab() {
+    const { accessToken } = useContext(AuthContext);
+
+    const fetchOrderItems = async () => {
+        let res = await fetch("http://127.0.0.1:8000/order/items/", {
+            headers: {"Authorization": `Bearer ${String(accessToken)}`}
+        })
+
+        let data = await res.json()
+        if (res.status !== 200) throw data;
+
+        return data
+    }
+
+    const {isPending, data, error} = useQuery({
+        queryKey: ["orderItems"],
+        queryFn: fetchOrderItems
+    })
+
+    if (data) console.log(data);
+    if (isPending) return 'Loading...';
+    if (error) return 'An error has occurred';
+
+    return (
+        <Box>
+        {data.length === 0 ?        
+                <Text>You have no ordered items.</Text>
+                :
+                data.map((item, i) => (
+                    <Card key={i} mb={"10px"} py={"10px"} pr={"10px"} direction={"row"}>
+                        <Image
+                            src={item.product.image}
+                            objectFit={"contain"}
+                            alt={item.product.name}
+                            boxSize={"125px"}
+                        />
+                        <Stack w={"100%"}>
+                            <Flex justify={"space-between"}>
+                                <Text fontWeight={700}>#{item.order}</Text>
+                                <Text fontWeight={700} color={
+                                    item.order_status === "DELIVERING" ? "#FFA500"
+                                    :
+                                    item.order_status === "RECEIVED" ? "green"
+                                    :
+                                    "black"
+                                    }
+                                >
+                                    {item.order_status}
+                                </Text>
+                            </Flex>
+                            <HStack>
+                                <Text>{item.product.name}</Text>
+                                <Text>Quantity: {item.quantity}</Text>                                
+                            </HStack>
+                            <Text>Total: {VNDDong.format(item.total_price)}</Text>
+                            <Text>Order at: {formatDate(item.created_at)}</Text>
+                        </Stack>
+                    </Card>
+                ))
+        }
+        </Box>
     )
 }
