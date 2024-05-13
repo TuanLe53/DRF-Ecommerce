@@ -133,7 +133,7 @@ function ProductTab() {
                                         size={"xs"}
                                     />
                                     <MenuList>
-                                        <MenuItem icon={<InfoIcon />} onClick={() => navigate(`/product/detail/${product.id}`)}>Detail</MenuItem>
+                                        <MenuItem icon={<InfoIcon />} onClick={() => navigate(`/product/detail/${product.slug}`)}>Detail</MenuItem>
                                         <MenuItem icon={<DeleteIcon />}>Delete</MenuItem>
                                     </MenuList>
                                 </Menu>
