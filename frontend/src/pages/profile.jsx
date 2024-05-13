@@ -34,7 +34,7 @@ export default function Profile() {
 
     return (
         <HStack spacing={"40px"} align={"start"}>
-            <Box w="30%" bg="cyan" p={"10px"}>
+            <Box w="30%" bg="cyan" p={"10px"} borderRadius={"9px"}>
                 <Center>
                     <Avatar size={"2xl"} src={data.avatar} />
                 </Center>
@@ -58,7 +58,7 @@ export default function Profile() {
                     <Text>{data.address}</Text>
                 </HStack>
             </Box>
-            <Box w="70%" p={2} bg="palegreen">
+            <Box w="70%" p={"10px"} bg="palegreen" borderRadius={"14px"}>
                 {data.user.user_type === "CUSTOMER" ?
                     <CustomerProfile />
                 :
