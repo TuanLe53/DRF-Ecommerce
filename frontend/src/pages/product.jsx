@@ -15,11 +15,11 @@ import {
     NumberIncrementStepper,
     NumberDecrementStepper,
     NumberInputStepper,
-    HStack,
     Button,
     FormControl,
     useToast,
-    FormErrorMessage
+    FormErrorMessage,
+    Flex
 } from "@chakra-ui/react";
 import { TagFilled } from "@ant-design/icons";
 import Slider from "react-slick";
@@ -103,7 +103,7 @@ export default function Product() {
 
     return (
         <Stack direction={"row"} spacing={"50px"}>
-            <Center w="50%" bg="pink" py={"20px"}>
+            <Center w="50%" py={"20px"}>
                 <div style={{width: "80%"}}>
                     <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
                         {product.images.map((item, i) => (
@@ -115,7 +115,7 @@ export default function Product() {
                 </div>
             </Center>
 
-            <Box w="50%" bg="teal">
+            <Box w="50%" bg="teal" p={"10px"} borderRadius={"14px"}>
                 <Heading>{product.name}</Heading>
                 <Text>{VNDDong.format(product.price)}</Text>
                 <Text>In stock: {product.quantity}</Text>
@@ -130,14 +130,14 @@ export default function Product() {
                         </WrapItem>
                     ))}
                 </Wrap>
-                <Text>Description: {product.description}</Text>
+                <Text mb={"5px"}>Description: {product.description}</Text>
 
                 {user === null ?
                     <Text>You need to login to continue shopping.</Text>
                     :
                     <form onSubmit={handleClick}>
-                        <HStack>
-                            <FormControl isRequired isInvalid={isQuantityValid}>
+                        <Flex>
+                            <FormControl isRequired isInvalid={isQuantityValid} mr={"5px"}>
                                 <NumberInput value={quantity} min={1} max={product.quantity} onChange={(value) => setQuantity(value)}>
                                     <NumberInputField />
                                     <NumberInputStepper>
@@ -150,7 +150,7 @@ export default function Product() {
                                 }
                             </FormControl>
                             <Button isLoading={AddPending} type="submit">Add to cart</Button>
-                        </HStack>
+                        </Flex>
                     </form>
             }
             </Box>
