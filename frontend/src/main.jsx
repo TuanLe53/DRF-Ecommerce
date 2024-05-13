@@ -18,6 +18,7 @@ import Product from "./pages/product.jsx";
 import MainLayout from "./components/layouts/MainLayout.jsx";
 import PlaceOrder from "./pages/placeOrder.jsx";
 import AuthenticationLayout from "./components/layouts/AuthenticationLayout.jsx";
+import VendorRoute from "./components/routes/VendorRoute.jsx";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,7 @@ const router = createBrowserRouter([
         element: <Home />
       },
       {
-        path: "/product/:product_id",
+        path: "/product/:slug",
         element: <Product />
       },
       {
@@ -42,11 +43,11 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: "/product/detail/:product_id",
+        path: "/product/detail/:slug",
         element: (
-          <ProtectedRoute>
+          <VendorRoute>
             <ProductDetail />
-          </ProtectedRoute>
+          </VendorRoute>
         )
       },
       {
