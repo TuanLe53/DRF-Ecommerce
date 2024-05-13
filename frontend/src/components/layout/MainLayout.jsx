@@ -34,11 +34,6 @@ export default function MainLayout() {
                     :
                         <HStack>
                             <IconButton
-                                aria-label="Shopping cart"
-                                icon={<ShoppingCartOutlined />}
-                                borderRadius={"50%"}
-                            />
-                            <IconButton
                                 aria-label="User profile"
                                 icon={<UserOutlined />}
                                 borderRadius={"50%"}
