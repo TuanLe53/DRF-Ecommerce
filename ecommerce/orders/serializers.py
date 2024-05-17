@@ -10,7 +10,12 @@ class OrderSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "address": {"read_only": True}
         }
-        
+
+class OrderFieldSerializer(serializers.ModelSerializer):
+    class  Meta:
+        model = Order
+        fields = ("id", "status", "created_at", "payment_type", "total_price", )
+
 class OrderItemSerializer(serializers.ModelSerializer):
     product = ProductBasicInfoSerializer()
     order_status = serializers.SerializerMethodField("get_order_status")
