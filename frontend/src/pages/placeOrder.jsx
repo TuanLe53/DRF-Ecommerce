@@ -61,8 +61,7 @@ export default function PlaceOrder() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log(formData)
-        // CreateOrder()
+        CreateOrder()
     } 
 
     return (
@@ -99,7 +98,7 @@ export default function PlaceOrder() {
                 </form>
             </Box>
             <Box bg={"red"} w={"30%"} p={"10px"} borderRadius={"14px"}>
-                <Heading>Policy</Heading>
+                <Heading>Policies</Heading>
                 <UnorderedList>
                     <ListItem>Lorem ipsum dolor sit amet consectetur adipisicing elit. Reiciendis cum repudiandae suscipit reprehenderit repellendus incidunt libero voluptatibus impedit consectetur, aperiam aut dolore veniam illo et dolores deserunt nemo vitae eligendi.</ListItem>
                     <ListItem>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam blanditiis corporis cumque nihil asperiores maiores saepe fugit accusamus! Porro ratione laudantium incidunt molestiae a voluptatum ipsa quaerat qui sequi rem.</ListItem>
