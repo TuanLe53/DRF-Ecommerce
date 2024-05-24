@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 
-from .serializers import OrderSerializer, OrderItemSerializer, OrderFieldSerializer
+from .serializers import OrderSerializer, OrderItemSerializer, OrderFieldSerializer, OrderDetailSerializer
 from .models import Order, OrderItem
 
 from customers.models import Customer, Cart, CartItem
@@ -72,7 +72,7 @@ class ListCreateOrder(generics.ListCreateAPIView):
         return Response(serializer.data, status=201)
 
 class RetrieveOrder(generics.RetrieveAPIView):
-    serializer_class = OrderSerializer
+    serializer_class = OrderDetailSerializer
     permission_classes = (IsAuthenticated, )
     queryset = Order.objects.all()
 
