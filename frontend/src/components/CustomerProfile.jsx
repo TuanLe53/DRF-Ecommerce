@@ -32,7 +32,9 @@ import {
     Heading,
     Divider,
     Flex,
-    Spacer
+    Spacer,
+    Image,
+    Stack
 } from "@chakra-ui/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
@@ -266,39 +268,127 @@ function OrderTab() {
         queryFn:fetchOrders
     })
 
-    if (data) console.log(data);
     if (isPending) return "Loading";
     if (error) return "An error has occurred";
 
     return (
         <>
             {data?.map((order, i) => (
-                <Card key={i} mb={"5px"}>
-                    <CardHeader pb={3}>
-                        <Flex>
-                            <Heading size="md">#{order.id}</Heading>
-                            <Spacer />
-                            <Text
-                                color={
-                                    order.status === "DELIVERING" ? "#FFA500"
-                                    :
-                                    order.status === "RECEIVED" ? "green"
-                                    :
-                                    "black"
-                                }
-                            >
-                                {order.status}
-                            </Text>
-                        </Flex>
-                    </CardHeader>
-                    <Divider />
-                    <CardBody pt={2}>
-                        <Text>Order date: {formatDate(order.created_at)}</Text>
-                        <Text>Payment type: {order.payment_type}</Text>
-                        <Text>Total: {VNDDong.format(order.total_price)}</Text>
-                    </CardBody>
-                </Card>
+                <Order key={i} order={order}/>
             ))}
         </>
+    )
+}
+
+function Order({order}) {
+    const {onOpen, isOpen, onClose} = useDisclosure();
+
+    return (
+        <>
+            <Card mb={"5px"} onClick={onOpen} cursor={"pointer"}>
+                <CardHeader pb={3}>
+                    <Flex>
+                        <Heading size="md">#{order.id}</Heading>
+                        <Spacer />
+                        <Text
+                            color={
+                            order.status === "DELIVERING" ? "#FFA500"
+                            :
+                            order.status === "RECEIVED" ? "green"
+                            :
+                            "black"
+                            }
+                        >
+                            {order.status}
+                        </Text>
+                    </Flex>
+                </CardHeader>
+                <Divider />
+                <CardBody pt={2}>
+                    <Text>Order date: {formatDate(order.created_at)}</Text>
+                    <Text>Payment type: {order.payment_type}</Text>
+                    <Text>Total: {VNDDong.format(order.total_price)}</Text>
+                </CardBody>
+            </Card>
+
+            <Modal isOpen={isOpen} onClose={onClose} size={"lg"}>
+                <ModalOverlay />
+                <OrderModalBody orderId={order.id} />
+            </Modal>
+        </>
+    )
+}
+
+function OrderModalBody({orderId}) {
+    const { accessToken } = useContext(AuthContext);
+
+    const fetchOrder = async () => {
+        const res = await fetch(`http://127.0.0.1:8000/order/${orderId}`, {
+            headers: {"Authorization": `Bearer ${String(accessToken)}`,},
+        })
+        const data = await res.json()
+        if (res.status !== 200) throw data;
+
+        return data
+    }
+
+    const { isPending, error, data} = useQuery({
+        queryKey: ["order"],
+        queryFn:fetchOrder
+    })
+
+    if (isPending) return "Loading";
+    if (error) return "An error has occurred";
+
+    return (
+        <ModalContent>
+            <ModalHeader>Order</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+                <p style={{"textAlign": "center"}}>#{orderId}</p>
+                <Flex justifyContent={"space-between"}>
+                    <Text>Status:</Text>
+                    <Text>{data.status}</Text>
+                </Flex>
+                <Flex justifyContent={"space-between"}>
+                    <Text>Order date:</Text>
+                    <Text>{formatDate(data.created_at)}</Text>
+                </Flex>
+                <Flex justifyContent={"space-between"}>
+                    <Text>Payment type:</Text>
+                    <Text>{data.payment_type}</Text>
+                </Flex>
+
+                <div>
+                    <Text>Products:</Text>
+                    {data.items.map((item, i) => (
+                        <Card direction={"row"} mb={"5px"} p={"5px"}>
+                            <Image
+                                objectFit={"contain"}
+                                src={item.product.image}
+                                maxW={"75px"}
+                            />
+                            <Flex align={"center"} w={"100%"}>
+                                <Box>
+                                    <Text>{item.product.name}</Text>
+                                    <Text>Quantity: {item.quantity}</Text>
+                                </Box>
+                                <Spacer />
+                                <Stack>
+                                    <Box>
+                                        <Text>{VNDDong.format(item.total_price)}</Text>
+                                    </Box>
+                                </Stack>
+                            </Flex>
+                        </Card>
+                    ))}
+                </div>
+
+                <Flex justifyContent={"space-between"} alignItems={"center"}>
+                    <Text fontWeight={"700"} fontSize={"28px"}>Total:</Text>
+                    <Text fontSize={"28px"}>{VNDDong.format(data.total_price)}</Text>
+                </Flex>
+            </ModalBody>
+        </ModalContent>
     )
 }
