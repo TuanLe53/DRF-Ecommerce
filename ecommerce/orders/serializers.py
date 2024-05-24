@@ -26,3 +26,17 @@ class OrderItemSerializer(serializers.ModelSerializer):
         
     def get_order_status(self, obj):
         return obj.order.status
+    
+class OrderItemBasicInfoSerializer(serializers.ModelSerializer):
+    product = ProductBasicInfoSerializer()
+    
+    class Meta:
+        model = OrderItem
+        fields = ("quantity", "total_price", "product", )
+    
+class OrderDetailSerializer(serializers.ModelSerializer):
+    items = OrderItemBasicInfoSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = Order
+        fields = "__all__"
