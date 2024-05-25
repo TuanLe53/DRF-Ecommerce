@@ -49,3 +49,8 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f"{self.product}: {self.quantity}"
+    
+class Discount(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name="discount")
+    percentage = models.PositiveSmallIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
