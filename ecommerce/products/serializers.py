@@ -2,6 +2,14 @@ from rest_framework import serializers
 from .models import Product, ProductImages, Category, Inventory, Discount
 from django.utils.text import slugify
 
+def calculate_final_price(product):
+    try:
+        discount = product.discount
+        percentage = discount.percentage
+        return product.price - (product.price * float(percentage)/100)
+    except Discount.DoesNotExist:
+        return product.price
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -38,13 +46,19 @@ class ProductSerializer(serializers.ModelSerializer):
     quantity = serializers.CharField(source="inventory.quantity", read_only=True)
     slug = serializers.SlugField(read_only=True)
 
+    discount = serializers.CharField(source="discount.percentage", read_only=True)
+    final_price = serializers.SerializerMethodField("get_final_price")
+
     class Meta: 
         model = Product
-        fields = ("id", "name", "slug", "price", "description", "categories", "quantity", "images")
+        fields = ("id", "name", "slug", "price", "description", "categories", "quantity", "images", "discount", "final_price")
         lookup_field = 'slug'
         extra_kwargs = {
             "id": {"read_only": True}
             }
+        
+    def get_final_price(self, obj):
+        return calculate_final_price(obj)
         
 class ProductBasicInfoSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField("get_image")
@@ -59,9 +73,4 @@ class ProductBasicInfoSerializer(serializers.ModelSerializer):
         return "http://127.0.0.1:8000/media/" + str(image.image)
     
     def get_final_price(self, obj):
-        try:
-            discount = obj.discount
-            percentage = discount.percentage
-            return obj.price - (obj.price * percentage//100)
-        except Discount.DoesNotExist:
-            return obj.price
+        return calculate_final_price(obj)
