@@ -70,11 +70,9 @@ function DiscountSection({ discount, productId }) {
     const { isOpen, getDisclosureProps, getButtonProps } = useDisclosure();
     const [hidden, setHidden] = useState(!isOpen);
 
-
     const toast = useToast();
 
-
-    const { isPending, mutate } = useMutation({
+    const { isPending:createPending, mutate:CreateDiscount } = useMutation({
         mutationFn: async () => {
             let body = {
                 percentage,
@@ -95,6 +93,7 @@ function DiscountSection({ discount, productId }) {
             return data;
         },
         onSuccess: () => {
+            setHidden(false)
             toast({
                 title: 'Success',
                 description: "Added discount",
@@ -116,8 +115,42 @@ function DiscountSection({ discount, productId }) {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        mutate()
+        CreateDiscount()
     }
+
+    const { isPending: deletePending, mutate: DeleteDiscount } = useMutation({
+        mutationFn: async () => {
+            const res = await fetch(`http://127.0.0.1:8000/products/discount/${productId}`, {
+                method: "DELETE",
+                headers: {"Authorization": `Bearer ${String(accessToken)}`}
+            });
+
+            let data = await res.json();
+            console.log("Hello world", res.status)
+            if (res.status !== 204) throw data;
+
+            return "Success";
+        },
+        onSuccess: () => {
+            toast({
+                title: 'Success',
+                description: "Discount removed",
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            })
+        },
+        onError: (error) => {
+            console.log(error)
+            toast({
+                title: "Error",
+                description: "Something went wrong. Please try again later",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            })
+        }
+    })
 
     return (
         <Box>
@@ -130,7 +163,7 @@ function DiscountSection({ discount, productId }) {
                     </Box>
                     :
                     <Box>
-                        <Badge colorScheme="green" fontSize={"1.5rem"}>-100%</Badge>
+                        <Badge colorScheme="green" fontSize={"1.5rem"}>-{discount}%</Badge>
                     </Box>
                 }
 
@@ -166,6 +199,7 @@ function DiscountSection({ discount, productId }) {
                                     />
                                     <IconButton
                                         type="submit"
+                                        isLoading={createPending}
                                         icon={<CheckIcon color={"green"}/>}
                                         borderStartRadius={0}
                                     />
@@ -178,7 +212,7 @@ function DiscountSection({ discount, productId }) {
                     (discount === null
                     ?                    
                         <IconButton
-                            aria-label="Delete discount"
+                            aria-label="Open discount form"
                             icon={<AddIcon />}
                             {...getButtonProps()}
                     />
@@ -186,6 +220,8 @@ function DiscountSection({ discount, productId }) {
 
                     <IconButton
                         aria-label="Delete discount"
+                        isLoading={deletePending}
+                        onClick={DeleteDiscount}
                         isDisabled={discount ? false : true}
                         icon={<DeleteIcon />}
                     />
