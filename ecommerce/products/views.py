@@ -9,7 +9,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import MultiPartParser
 
 from .serializers import CategorySerializer, ProductSerializer
-from .models import Category, Product, ProductImages, Inventory
+from .models import Category, Product, ProductImages, Inventory, Discount
 from .permissions import IsVendor, IsProductOwner
 from vendors.models import Vendor
 
@@ -60,7 +60,7 @@ class ListCreateProduct(generics.ListCreateAPIView):
             
         except Exception as e:
             return Response(
-                {"detail": "Error creating product. Please try again later."},
+                {"error": "Error creating product. Please try again later."},
                 status=500
             )
         
@@ -95,3 +95,48 @@ class ListProductsByID(generics.ListAPIView):
         products = Product.objects.filter(vendor=vendor)
         
         return products
+    
+class CreateDiscount(generics.CreateAPIView):
+    queryset = Product.objects.all()
+    permission_classes = [IsVendor, ]
+    
+    def post(self, request):
+        vendor = get_object_or_404(Vendor, user=request.user)
+        product = get_object_or_404(Product, id=request.data.get("product"))
+        
+        if product.vendor != vendor:
+            return Response(
+                {"error": "You are not the owner of this product"},
+                status=403
+            )
+            
+        Discount.objects.create(
+            product=product,
+            percentage=request.data["percentage"]
+        )
+        
+        serializer = ProductSerializer(product)
+        
+        return Response(
+            {
+                "detail": "Success",
+                "product": serializer.data
+            },
+            status=201
+        )
+        
+class DeleteDiscount(generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    
+    def destroy(self, request, *args, **kwargs):
+        pd_id = kwargs.get("id")
+        product = get_object_or_404(Product, id=pd_id)
+        
+        if hasattr(product, "discount"):
+            product.discount.delete()
+            return Response(status=204)
+        
+        return Response(
+            {"error": "No discount has been found"},
+            status=404
+        )
