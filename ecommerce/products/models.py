@@ -31,6 +31,14 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    @property
+    def final_price(self):
+        try:
+            discount = self.discount
+            percentage = discount.percentage
+            return self.price - (self.price * float(percentage)/100)
+        except Discount.DoesNotExist:
+            return self.price
 
     def __str__(self):
         return self.name
