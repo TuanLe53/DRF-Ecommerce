@@ -5,11 +5,13 @@ import { totalPrice } from "../utils/priceUtils";
 import { useContext, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import AuthContext from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function PlaceOrder() {
     const cartItems = useBoundStore(store => store.cartItems);
     const { accessToken } = useContext(AuthContext);
     const toast = useToast();
+    const navigate = useNavigate();
 
     let products = [];
     cartItems.map((item) => products.push({
@@ -53,9 +55,16 @@ export default function PlaceOrder() {
                 duration: 5000,
                 isClosable: true,
             })
+            navigate("/profile")
         },
         onError: (error) => {
-            console.log(error)
+            toast({
+                title: 'Error',
+                description: "Something went wrong. Please try again later.",
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            })
         }
     })
 
