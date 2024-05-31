@@ -19,9 +19,13 @@ import {
     FormControl,
     useToast,
     FormErrorMessage,
-    Flex
+    Flex,
+    Divider,
+    Badge,
+    HStack
 } from "@chakra-ui/react";
 import { TagFilled } from "@ant-design/icons";
+import { InfoOutlineIcon } from "@chakra-ui/icons";
 import Slider from "react-slick";
 import { useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -97,14 +101,14 @@ export default function Product() {
         queryKey: ["product"],
         queryFn: fetchProduct,
     });
-
+    if (product) console.log(product);
     if (isPending) return "Loading";
     if (error) return "An error has occurred";
 
     return (
         <Stack direction={"row"} spacing={"50px"}>
             <Center w="50%" py={"20px"}>
-                <div style={{width: "80%"}}>
+                <div style={{width: "65%"}}>
                     <Slider dots={true} infinite={true} speed={500} slidesToShow={1} slidesToScroll={1}>
                         {product.images.map((item, i) => (
                             <div key={i}>
@@ -115,9 +119,19 @@ export default function Product() {
                 </div>
             </Center>
 
-            <Box w="50%" bg="teal" p={"10px"} borderRadius={"14px"}>
+            <Box w="50%" p={"10px"} borderRadius={"14px"}>
                 <Heading>{product.name}</Heading>
-                <Text>{VNDDong.format(product.price)}</Text>
+                <Divider borderColor={"gray"} borderWidth={"1.5px"} />
+                <HStack spacing={"1rem"}>
+                    {product.discount !== null &&
+                        <Badge color={"red"}>-{product.discount}%</Badge>
+                    }
+                    <Text fontSize={"24"} as={"b"}>{VNDDong.format(product.final_price)}</Text>
+                    {product.discount !== null &&
+                        <Text as={"s"}>{VNDDong.format(product.price)}</Text>
+                    }
+                </HStack>
+                <Divider borderColor={"gray"} borderWidth={"1.5px"}/>
                 <Text>In stock: {product.quantity}</Text>
                 <Wrap>
                     <WrapItem>Tags:</WrapItem>
@@ -130,10 +144,14 @@ export default function Product() {
                         </WrapItem>
                     ))}
                 </Wrap>
-                <Text mb={"5px"}>Description: {product.description}</Text>
 
+                <Text mb={"5px"}>Description: {product.description}</Text>
+                
                 {user === null ?
-                    <Text>You need to login to continue shopping.</Text>
+                    <Flex alignItems={"center"}>
+                        <InfoOutlineIcon boxSize={3.5} color={"#FF7F50"} mr={"5px"}/>
+                        <Text color={"#FF7F50"}>You need to login to continue shopping.</Text>
+                    </Flex>
                     :
                     <form onSubmit={handleClick}>
                         <Flex>
@@ -152,7 +170,7 @@ export default function Product() {
                             <Button isLoading={AddPending} type="submit">Add to cart</Button>
                         </Flex>
                     </form>
-            }
+                }
             </Box>
         </Stack>
     )
