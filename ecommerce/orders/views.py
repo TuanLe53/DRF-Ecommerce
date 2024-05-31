@@ -51,7 +51,7 @@ class ListCreateOrder(generics.ListCreateAPIView):
         total_price = 0
         for item in pd_list:
             pd = Product.objects.get(id=item["product_id"])
-            price = pd.price * item["quantity"]
+            price = pd.final_price * item["quantity"]
             
             #Remove product from cart
             CartItem.objects.filter(cart=cart, product=pd).delete()
