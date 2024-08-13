@@ -9,22 +9,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useEffect, useState } from 'react'
 import useMeasure from 'react-use-measure'
 import { TransitionPanel } from '@/components/ui/transitionPanel'
+import { useMutation } from '@tanstack/react-query'
 
 
 const userInfoFormSchema = z.object({
-  firstName: z.string().max(50).min(1),
-  lastName: z.string().max(50).min(1),
+  first_name: z.string().max(50).min(1),
+  last_name: z.string().max(50).min(1),
   email: z.string().email(),
   password: z.string().min(6,  { message: "Password is too short" }).max(50, { message: "Password is too long" }),
-  userType: z.enum(['VENDOR', 'CUSTOMER'])
+  user_type: z.enum(['VENDOR', 'CUSTOMER'])
 })
 
 const vendorFormSchema = z.object({
-  shopName: z.string().min(10).max(50),
+  shop_name: z.string().min(10).max(50),
   description: z.string().min(50).max(255),
   address: z.string().min(10).max(125),
   city: z.string().min(3).max(125),
-  phoneNumber: z.string().min(10).max(11)
+  phone_number: z.string().min(10).max(11)
 })
 
 export const Route = createLazyFileRoute('/register')({
@@ -37,8 +38,8 @@ function Register() {
     defaultValues: {
       email: '',
       password: '',
-      firstName: '',
-      lastName: ''
+      first_name: '',
+      last_name: ''
     }
   })
 
@@ -57,11 +58,11 @@ function Register() {
   }
 
   const [userInfo, setUserInfo] = useState<z.infer<typeof userInfoFormSchema>>({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
     password: '',
-    userType: 'CUSTOMER'
+    user_type: 'CUSTOMER'
   });
 
   const goToNextStep = (values: z.infer<typeof userInfoFormSchema>) => {
@@ -112,7 +113,7 @@ function Register() {
             <form onSubmit={userInfoForm.handleSubmit(goToNextStep)} className='w-4/5 lg:w-2/5 p-2 rounded-xl'>
               <FormField
                 control={userInfoForm.control}
-                name='firstName'
+                name='first_name'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
@@ -129,7 +130,7 @@ function Register() {
               </FormField>
               <FormField
                 control={userInfoForm.control}
-                name='lastName'
+                name='last_name'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
@@ -181,7 +182,7 @@ function Register() {
 
               <FormField
                 control={userInfoForm.control}
-                name='userType'
+                name='user_type'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
@@ -192,7 +193,7 @@ function Register() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {userInfoFormSchema.shape.userType.options.map((option) => (
+                        {userInfoFormSchema.shape.user_type.options.map((option) => (
                           <SelectItem key={option} value={option}>
                             {option}
                           </SelectItem>
@@ -209,7 +210,7 @@ function Register() {
             </form>
           </Form>
 
-          {userInfo.userType === 'VENDOR' ? <VendorForm userInfo={userInfo} handleSetStep={handleSetStep} step={step}/> : <CustomerForm />}
+          {userInfo.user_type === 'VENDOR' ? <VendorForm userInfo={userInfo} handleSetStep={handleSetStep} step={step}/> : <CustomerForm />}
 
         </TransitionPanel>
       </div>
@@ -227,16 +228,22 @@ function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
   const form = useForm<z.infer<typeof vendorFormSchema>>({
     resolver: zodResolver(vendorFormSchema),
     defaultValues: {
-      shopName: '',
+      shop_name: '',
       description: '',
       address: '',
       city: '',
-      phoneNumber: ''
+      phone_number: ''
     }
   });
 
-  const handleSubmit = () => {
-    console.log(userInfo)
+  const handleSubmit = (values: z.infer<typeof vendorFormSchema>) => {
+    // console.table(values)
+    // console.table(userInfo)
+    const x = {
+      ...values,
+      user: userInfo
+    }
+    console.table(x)
   }
 
   return (
@@ -244,7 +251,7 @@ function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
       <form onSubmit={form.handleSubmit(handleSubmit)}>
         <FormField
           control={form.control}
-          name='shopName'
+          name='shop_name'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Shop name</FormLabel>
@@ -304,7 +311,7 @@ function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
         </FormField>
         <FormField
           control={form.control}
-          name='phoneNumber'
+          name='phone_number'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Phone number</FormLabel>
