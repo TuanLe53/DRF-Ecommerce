@@ -23,7 +23,7 @@ const vendorFormSchema = z.object({
   shopName: z.string().min(10).max(50),
   description: z.string().min(50).max(255),
   address: z.string().min(10).max(125),
-  city: z.string().min(10).max(125),
+  city: z.string().min(3).max(125),
   phoneNumber: z.string().min(10).max(11)
 })
 
@@ -209,11 +209,7 @@ function Register() {
             </form>
           </Form>
 
-          <div>
-            {userInfo.userType === 'VENDOR' ? <VendorForm /> : <CustomerForm />}
-            <Button onClick={() => handleSetStep(step - 1)}>Back</Button>
-            <Button>Register</Button>
-          </div>
+          {userInfo.userType === 'VENDOR' ? <VendorForm userInfo={userInfo} handleSetStep={handleSetStep} step={step}/> : <CustomerForm />}
 
         </TransitionPanel>
       </div>
@@ -221,7 +217,13 @@ function Register() {
   )
 }
 
-function VendorForm() {
+interface VendorFormProps{
+  step: number;
+  handleSetStep: (newStep: number) => void;
+  userInfo: z.infer<typeof userInfoFormSchema>;
+}
+
+function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
   const form = useForm<z.infer<typeof vendorFormSchema>>({
     resolver: zodResolver(vendorFormSchema),
     defaultValues: {
@@ -234,7 +236,7 @@ function VendorForm() {
   });
 
   const handleSubmit = () => {
-    console.log('Submit')
+    console.log(userInfo)
   }
 
   return (
@@ -315,7 +317,9 @@ function VendorForm() {
           )}
         >
         </FormField>
-
+        
+        <Button onClick={() => handleSetStep(step - 1)}>Back</Button>
+        <Button type='submit'>Register</Button>
       </form>
     </Form>
   )
