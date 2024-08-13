@@ -236,14 +236,39 @@ function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
     }
   });
 
+  const register = async (data: any) => {
+    const res = await fetch('http://127.0.0.1:8000/vendor/new/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+
+    if (res.status !== 201) {
+      throw new Error('Please try again later.')
+    }
+
+    return res.json()
+  }
+
+  const {mutate: doRegister, isPending} = useMutation({
+    mutationFn: register,
+    onError: (err) => {
+      console.log(err)
+    },
+    onSuccess: () => {
+      console.log('Success')
+    }
+  });
+
   const handleSubmit = (values: z.infer<typeof vendorFormSchema>) => {
-    // console.table(values)
-    // console.table(userInfo)
-    const x = {
+    const body = {
       ...values,
       user: userInfo
     }
-    console.table(x)
+
+    doRegister(body)
   }
 
   return (
@@ -326,7 +351,7 @@ function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
         </FormField>
         
         <Button onClick={() => handleSetStep(step - 1)}>Back</Button>
-        <Button type='submit'>Register</Button>
+        <Button type='submit' disabled={isPending}>Register</Button>
       </form>
     </Form>
   )
