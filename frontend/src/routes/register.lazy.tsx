@@ -76,10 +76,10 @@ function Register() {
   }, [step]);
 
   return (
-    <div className='flex flex-col justify-between items-center'>
-      <h1>Register</h1>
+    <div className='flex flex-col items-center'>
+      <h1 className='font-semibold text-3xl mb-3'>Register</h1>
 
-      <div>
+      <div className='w-4/5 lg:w-2/5 p-2 rounded-xl bg-gray-200'>
         <TransitionPanel
           activeIndex={step}
           variants={{
@@ -110,7 +110,7 @@ function Register() {
           custom={direction}
         >
           <Form {...userInfoForm}>
-            <form onSubmit={userInfoForm.handleSubmit(goToNextStep)} className='w-4/5 lg:w-2/5 p-2 rounded-xl'>
+            <form onSubmit={userInfoForm.handleSubmit(goToNextStep)}>
               <FormField
                 control={userInfoForm.control}
                 name='first_name'
@@ -203,10 +203,9 @@ function Register() {
                   </FormItem>
                 )}
               >
-
               </FormField>
               
-              <Button type='submit' className='float-right'>Next</Button>
+              <Button type='submit' className='mt-3 float-right'>Next</Button>
             </form>
           </Form>
 
