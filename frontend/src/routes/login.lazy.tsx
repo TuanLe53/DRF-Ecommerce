@@ -2,6 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation } from '@tanstack/react-query'
 import { createLazyFileRoute } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -24,8 +25,34 @@ function Login() {
     }
   })
 
+  const login = async (body: z.infer<typeof loginFormSchema>) => {
+    const res = await fetch('http://127.0.0.1:8000/user/login/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+
+    const data = await res.json()
+
+    if (res.status !== 200) {
+      throw data
+    }
+
+    return data
+  }
+
+  const {mutate: doLogin, isPending} = useMutation({
+    mutationFn: login,
+    onError: (err) => {
+      console.log(err)
+    },
+    onSuccess: (data) => {
+      console.log(data)
+    }
+  })
+
   const handleSubmit = (values: z.infer<typeof loginFormSchema>) => {
-    console.log(values)
+    doLogin(values)
   }
 
   return (
@@ -62,7 +89,13 @@ function Login() {
           >
           </FormField>
 
-          <Button type='submit' className='mt-3 float-right'>Login</Button>
+          <Button
+            type='submit'
+            className='mt-3 float-right'
+            disabled={isPending}
+          >
+            Login
+          </Button>
         </form>
       </Form>
     </div>
