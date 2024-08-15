@@ -1,9 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useAuth } from '@/contexts/authContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -17,6 +18,9 @@ export const Route = createLazyFileRoute('/login')({
 })
 
 function Login() {
+  const {updateAuthState} = useAuth();
+  const navigate = useNavigate({from: '/login'});
+
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
@@ -47,7 +51,9 @@ function Login() {
       console.log(err)
     },
     onSuccess: (data) => {
-      console.log(data)
+      updateAuthState(data.access)
+      localStorage.setItem('refreshToken', data.refresh)
+      navigate({to: '/'})
     }
   })
 
