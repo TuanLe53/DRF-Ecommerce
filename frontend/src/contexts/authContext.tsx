@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
 
     const updateAuthState = (token: string) => {
+        localStorage.setItem('accessToken', token)
         setAuthState({
             authToken: token,
             isAuth: true
@@ -71,6 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const logout = async () => {
         localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
         setAuthState({
             authToken: null,
             isAuth: false
@@ -95,9 +97,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const data = await res.json();
     
             if (res.status === 200) {
-                localStorage.setItem('accessToken', JSON.stringify(data.access))
+                console.log(data)
+                console.log(data.refresh)
+                localStorage.setItem('accessToken', data.access)
+                localStorage.setItem('refreshToken', data.refresh)
                 updateAuthState(data.access)
             } else {
+                console.log(data)
                 logout()
             }
         }
@@ -126,7 +132,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }, fourMinutes)
 
         return () => clearInterval(interval)
-    }, [authState, loading])
+    }, [authState.authToken, loading])
 
     return (
         <AuthContext.Provider value={contextData}>
