@@ -1,26 +1,22 @@
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router'
+import { ContextProps } from '@/contexts/authContext';
+import { QueryClient } from '@tanstack/react-query';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/router-devtools'
 
-export const Route = createRootRoute({
-  component: () => (
+export interface RouterContext {
+  auth: ContextProps;
+  queryClient: QueryClient;
+}
+
+export const Route = createRootRouteWithContext<RouterContext>()({
+  component: RootComponent,
+})
+
+function RootComponent() {
+  return (
     <>
-      <div className='p-2 flex gap-2'>
-        <Link to='/' className='[&.active]:font-bold'>
-          Home
-        </Link>{' '}
-        <Link to='/about' className='[&.active]:font-bold'>
-          About
-        </Link>{' '}
-        <Link to='/login' className='[&.active]:font-bold'>
-          Login
-        </Link>{' '}
-        <Link to='/register' className='[&.active]:font-bold'>
-          Register
-        </Link>
-      </div>
-      <hr />
       <Outlet />
       <TanStackRouterDevtools />
     </>
-  ),
-})
+  )
+}
