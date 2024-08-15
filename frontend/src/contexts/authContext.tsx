@@ -97,13 +97,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             const data = await res.json();
     
             if (res.status === 200) {
-                console.log(data)
-                console.log(data.refresh)
                 localStorage.setItem('accessToken', data.access)
                 localStorage.setItem('refreshToken', data.refresh)
                 updateAuthState(data.access)
             } else {
-                console.log(data)
                 logout()
             }
         }
