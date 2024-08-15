@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { useAuth } from '@/contexts/authContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
+import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -27,16 +27,16 @@ function Login() {
       email: '',
       password: ''
     }
-  })
+  });
 
   const login = async (body: z.infer<typeof loginFormSchema>) => {
     const res = await fetch('http://127.0.0.1:8000/user/login/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
-    })
+    });
 
-    const data = await res.json()
+    const data = await res.json();
 
     if (res.status !== 200) {
       throw data
@@ -65,7 +65,10 @@ function Login() {
     <div className='flex flex-col items-center'>
       <h1 className='font-semibold text-3xl mb-3'>Login</h1> 
       <Form {...loginForm}>
-        <form onSubmit={loginForm.handleSubmit(handleSubmit)}>
+        <form
+          className='w-4/5 lg:w-2/5 p-2 rounded-xl bg-gray-200'
+          onSubmit={loginForm.handleSubmit(handleSubmit)}
+        >
           <FormField
             control={loginForm.control}
             name='email'
@@ -94,14 +97,16 @@ function Login() {
             )}
           >
           </FormField>
-
-          <Button
-            type='submit'
-            className='mt-3 float-right'
-            disabled={isPending}
-          >
-            Login
-          </Button>
+          
+          <div className='mt-3 flex items-center justify-end'>
+            <Link to='/register' className='mr-3'>Register</Link>
+            <Button
+              type='submit'
+              disabled={isPending}
+            >
+              Login
+            </Button>
+          </div>
         </form>
       </Form>
     </div>
