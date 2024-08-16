@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/authContext';
 import { Product } from '@/types/product';
 import { useQuery } from '@tanstack/react-query';
@@ -55,13 +56,33 @@ function Profile() {
                 <div>
                     <div>
                         <h1>Products</h1>
-                        <Button><Plus />Add Product</Button>
+                        <AddProductDialog />
                     </div>
                     
                     <ProductList />
                 </div>
             </div>
         </div>
+    )
+}
+
+function AddProductDialog() {
+    
+    return (
+        <Dialog>
+            <DialogTrigger>
+                <Button><Plus />Add Product</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Add a product to your vendor</DialogTitle>
+                    <DialogDescription>Fill out the form to add a product to your vendor.</DialogDescription>
+                </DialogHeader>
+                <div>
+                    <p>This is suppose to be a form</p>
+                </div>
+            </DialogContent>
+        </Dialog>
     )
 }
 
