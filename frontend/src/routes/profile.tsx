@@ -1,5 +1,8 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/authContext';
+import { Product } from '@/types/product';
+import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { UserRound, Plus } from 'lucide-react';
 
@@ -63,10 +66,39 @@ function Profile() {
 }
 
 function ProductList() {
+    const { authState } = useAuth();
     
+    const fetchProducts = async (): Promise<Product[]> => {
+        const res = await fetch('http://127.0.0.1:8000/products/vendor/', {
+            headers: { 'Authorization': `Bearer ${authState.authToken}` },
+        })
+        const data = await res.json();
+        if (res.status !== 200) throw data;
+
+        return data
+    }
+
+    const { isPending, isError, data: products } = useQuery({
+        queryKey: ['user_products'],
+        queryFn: fetchProducts,
+    });
+
+    if (isPending) return <div>Loading...</div>
+    if(isError) return <div>Error</div>
+
     return (
         <div>
-            <p>Product List</p>
+            {products.length === 0 ?    
+                <p>No products</p>
+                :
+                <ul>
+                    {products.map((product) => (
+                        <li key={product.id}>
+                            <p>{product.name}</p>
+                        </li>
+                    ))}
+                </ul>
+            }
         </div>
     )
 }
