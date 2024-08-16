@@ -53,9 +53,9 @@ function Profile() {
                     <h1>{profile.shop_name}</h1>
                     <p>{profile.description}</p>
                 </div>
-                <div>
-                    <div>
-                        <h1>Products</h1>
+                <div className='bg-red-200'>
+                    <div className='flex justify-between items-center'>
+                        <h1 className='text-2xl font-semibold'>Products</h1>
                         <AddProductDialog />
                     </div>
                     
@@ -110,7 +110,7 @@ function ProductList() {
     return (
         <div>
             {products.length === 0 ?    
-                <p>No products</p>
+                <p className='text-center text-4xl'>No products</p>
                 :
                 <ul>
                     {products.map((product) => (
