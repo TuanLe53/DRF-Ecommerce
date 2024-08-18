@@ -1,11 +1,10 @@
+import AddProductDialog from '@/components/addProductDialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useAuth } from '@/contexts/authContext';
 import { Product } from '@/types/product';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { UserRound, Plus } from 'lucide-react';
+import { UserRound } from 'lucide-react';
 
 const fetchProfile = async (authToken: string) => {
     const res = await fetch('http://127.0.0.1:8000/user/profile/', {
@@ -63,26 +62,6 @@ function Profile() {
                 </div>
             </div>
         </div>
-    )
-}
-
-function AddProductDialog() {
-    
-    return (
-        <Dialog>
-            <DialogTrigger>
-                <Button><Plus />Add Product</Button>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Add a product to your vendor</DialogTitle>
-                    <DialogDescription>Fill out the form to add a product to your vendor.</DialogDescription>
-                </DialogHeader>
-                <div>
-                    <p>This is suppose to be a form</p>
-                </div>
-            </DialogContent>
-        </Dialog>
     )
 }
 
