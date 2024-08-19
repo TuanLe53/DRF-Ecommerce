@@ -2,11 +2,22 @@ import React, { useState } from "react";
 import {Plus, X} from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Badge } from "./ui/badge";
-
-const sample = ['www', 'sss', 'aaa', 'zzz', 'sssssss', 'ssssss', 'xxzsa', 'xqwqeq', 'sadsadadasas'];
+import { useQuery } from "@tanstack/react-query";
+import { Category } from "@/types/product";
 
 interface DialogProps{
     setState: React.Dispatch<React.SetStateAction<string[]>>;
+}
+
+async function getCategories(): Promise<Category[]> {
+    const res = await fetch('http://127.0.0.1:8000/products/categories/');
+    const data = await res.json();
+
+    if (res.status !== 200) {
+        throw data
+    }
+
+    return data
 }
 
 export default function CategoriesDropdown({setState}:DialogProps){
@@ -23,6 +34,14 @@ export default function CategoriesDropdown({setState}:DialogProps){
         setState((prevState) => prevState.filter((item) => item !== category))
     }
 
+    const {isPending, isError, data:categories} = useQuery({
+        queryKey: ['categories'],
+        queryFn: getCategories
+    })
+
+    if (isPending) return <div>Loading...</div>
+    if(isError) return <div>Error</div>
+
     return (
         <ul className="flex flex-wrap gap-1">
             {selectedCategories.map((item, index) => (
@@ -36,21 +55,21 @@ export default function CategoriesDropdown({setState}:DialogProps){
                 </PopoverTrigger>
                 <PopoverContent>
                     <ul>
-                        {sample.map((item, index) => (
+                        {categories.map((item, index) => (
                             <li
                                 className="flex items-center"
                                 key={index}
                             >
                                 <p
                                     className="hover:cursor-pointer"
-                                    onClick={() => addCategory(item)}
+                                    onClick={() => addCategory(item.name)}
                                 >
-                                    {item}
+                                    {item.name}
                                 </p>
-                                {selectedCategories.includes(item) &&
+                                {selectedCategories.includes(item.name) &&
                                     <X
                                         className="w-4 h-4 hover:cursor-pointer"
-                                        onClick={() => removeCategory(item)}
+                                        onClick={() => removeCategory(item.name)}
                                     />
                                 }
                             </li>
