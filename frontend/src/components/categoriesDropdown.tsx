@@ -46,18 +46,18 @@ export default function CategoriesDropdown({setState}:DialogProps){
         <ul className="flex flex-wrap gap-1">
             {selectedCategories.map((item, index) => (
                 <li key={index}>
-                    <Badge>{item}<X className="h-4 w-4 hover:cursor-pointer" onClick={() => removeCategory(item)}/></Badge>
+                    <Badge>{item}<X className="h-5 w-5 hover:cursor-pointer" onClick={() => removeCategory(item)}/></Badge>
                 </li>
             ))}
             <Popover>
                 <PopoverTrigger>
                     <Badge>Add Category<Plus /></Badge>
                 </PopoverTrigger>
-                <PopoverContent>
+                <PopoverContent className="w-40">
                     <ul>
                         {categories.map((item, index) => (
                             <li
-                                className="flex items-center"
+                                className="flex items-center justify-between"
                                 key={index}
                             >
                                 <p
