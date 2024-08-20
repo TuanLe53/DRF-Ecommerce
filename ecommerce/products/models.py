@@ -21,7 +21,7 @@ class Category(models.Model):
 class Product(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, unique=True)
     name = models.CharField(max_length=200,null=True)
-    slug = models.SlugField(max_length=200,db_index=True)
+    slug = models.SlugField(max_length=200,db_index=True, unique=True)
     price = models.FloatField()
     description = models.TextField(blank=True, null=True)
     
