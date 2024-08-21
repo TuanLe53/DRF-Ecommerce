@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as ProfileImport } from './routes/profile'
 import { Route as ProductsProductSlugImport } from './routes/products.$productSlug'
+import { Route as ProductsProductSlugEditImport } from './routes/products_.$productSlug.edit'
 
 // Create Virtual Routes
 
@@ -52,6 +53,11 @@ const IndexLazyRoute = IndexLazyImport.update({
 
 const ProductsProductSlugRoute = ProductsProductSlugImport.update({
   path: '/products/$productSlug',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ProductsProductSlugEditRoute = ProductsProductSlugEditImport.update({
+  path: '/products/$productSlug/edit',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -101,6 +107,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsProductSlugImport
       parentRoute: typeof rootRoute
     }
+    '/products/$productSlug/edit': {
+      id: '/products/$productSlug/edit'
+      path: '/products/$productSlug/edit'
+      fullPath: '/products/$productSlug/edit'
+      preLoaderRoute: typeof ProductsProductSlugEditImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -113,6 +126,7 @@ export const routeTree = rootRoute.addChildren({
   LoginLazyRoute,
   RegisterLazyRoute,
   ProductsProductSlugRoute,
+  ProductsProductSlugEditRoute,
 })
 
 /* prettier-ignore-end */
@@ -128,7 +142,8 @@ export const routeTree = rootRoute.addChildren({
         "/about",
         "/login",
         "/register",
-        "/products/$productSlug"
+        "/products/$productSlug",
+        "/products/$productSlug/edit"
       ]
     },
     "/": {
@@ -148,6 +163,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/products/$productSlug": {
       "filePath": "products.$productSlug.tsx"
+    },
+    "/products/$productSlug/edit": {
+      "filePath": "products_.$productSlug.edit.tsx"
     }
   }
 }
