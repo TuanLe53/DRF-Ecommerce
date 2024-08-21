@@ -1,5 +1,6 @@
 from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
+from datetime import datetime
 from django.db import transaction
 
 from rest_framework import generics
@@ -34,7 +35,8 @@ class ListCreateProduct(generics.ListCreateAPIView):
     def post(self, request):
         vendor = get_object_or_404(Vendor, user=request.user)
         
-        product_slug = slugify(request.data["name"])
+        current_time = datetime.now().strftime("%d%m%Y %H%M%S")
+        product_slug = slugify(f'{request.data["name"]} {current_time}')
         
         serializer = ProductSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
