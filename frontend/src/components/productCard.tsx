@@ -9,6 +9,7 @@ import { useState } from "react";
 import { useToast } from "./ui/use-toast";
 import { useAuth } from "@/contexts/authContext";
 import { useMutation } from "@tanstack/react-query";
+import { formattedVND } from "@/lib/formatCurrency";
 
 interface ProductCardProps{
     product: Product;
@@ -41,16 +42,16 @@ export default function ProductCard({product}:ProductCardProps) {
                     />
                 </div>
 
-                <div className="h-2/5 flex flex-col justify-between">
-                    <p className="product-title">{product.name}</p>
+                <div className="h-2/5 p-1 flex flex-col justify-between">
+                    <p className="product-title text-xl">{product.name}</p>
                     <div className="flex flex-col">
                     {product.discount &&
                     <>                    
                         <Badge>{product.discount}</Badge>
-                        <p className="line-through">{product.price}</p>
+                        <p className="line-through">{formattedVND(product.final_price)}</p>
                     </>    
                     }
-                    <p className="self-end justify-self-end">{product.final_price}</p>
+                    <p className="self-end justify-self-end text-orange-500 text-2xl">{formattedVND(product.final_price)}</p>
                     </div>
                         
                 </div>
