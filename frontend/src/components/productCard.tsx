@@ -20,32 +20,42 @@ interface ButtonProps{
 
 export default function ProductCard({product}:ProductCardProps) {
     const router = useRouterState();
-    
+    console.log(product.images)
     return (
-        <div
-            className="w-56 h-80 bg-slate-50 relative hover:cursor-pointer hover:shadow-2xl"
-        >
-            {router.location.pathname === '/profile' &&
-            <div className="absolute top-1 right-1">
-                    <GroupButtons productSlug={product.slug} />    
-            </div>
-            }
-            <Link
-                to="/products/$productSlug"
-                params={{productSlug: product.slug}}            
+            <div
+                className="w-56 h-80 bg-slate-50 relative hover:cursor-pointer hover:shadow-2xl"
             >
-            <div className="h-3/5 bg-green-200">
-                <p className="text-center">Hello World</p>
-            </div>
+                {router.location.pathname === '/profile' &&
+                <div className="absolute top-1 right-1">
+                        <GroupButtons productSlug={product.slug} />    
+                </div>
+                }
+                <Link
+                    to="/products/$productSlug"
+                    params={{productSlug: product.slug}}            
+                >
+                <div className="h-3/5">
+                    <img
+                        src={product.images[0].image}
+                        className="h-48 w-96 object-contain"
+                    />
+                </div>
 
-            <div className="h-2/5">
-                <p className="product-title">New Yorkers are facing the winter chill with less warmth this year as the city's most revered soup stand unexpectedly shutters, following a series of events that have left the community puzzled.</p>
-                <Badge>-50%</Badge>
-                <p className="line-through">500,000VND</p>
-                <p>250,000VND</p>
+                <div className="h-2/5 flex flex-col justify-between">
+                    <p className="product-title">{product.name}</p>
+                    <div className="flex flex-col">
+                    {product.discount &&
+                    <>                    
+                        <Badge>{product.discount}</Badge>
+                        <p className="line-through">{product.price}</p>
+                    </>    
+                    }
+                    <p className="self-end justify-self-end">{product.final_price}</p>
+                    </div>
+                        
+                </div>
+                </Link>
             </div>
-            </Link>
-        </div>
     )
 }
 
