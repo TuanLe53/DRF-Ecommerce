@@ -68,6 +68,10 @@
   }
 }
 
+#root{
+  height: 100vh;
+}
+
 .product-title{
   display: -webkit-box;
   -webkit-box-orient: vertical;
