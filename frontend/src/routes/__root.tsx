@@ -1,3 +1,4 @@
+import { Toaster } from '@/components/ui/toaster';
 import { ContextProps, useAuth } from '@/contexts/authContext';
 import { QueryClient } from '@tanstack/react-query';
 import { createRootRouteWithContext, Link, Outlet, redirect } from '@tanstack/react-router'
@@ -36,6 +37,7 @@ function RootComponent() {
           <Link to='/login'>Login</Link>
         }
       </div>
+      <Toaster />
       <Outlet />
       <TanStackRouterDevtools />
     </>
