@@ -49,23 +49,42 @@ function EditProduct() {
           <CarouselNext />
         </Carousel>
       </div>
-      <div className='flex-grow p-2 bg-purple-300'>
+      <div className='w-3/5 p-2 bg-purple-300'>
         <p>Form sections</p>
+        <InfoSection product={product}/>
         <PriceSection product={product}/>
       </div>
     </div>
   )
 }
 
-interface PriceProps{
+interface SectionProps{
   product: Product;
 }
 
-function PriceSection({product}:PriceProps) {
+function InfoSection({product}:SectionProps) {
+  
+  return (
+    <div className='p-3 rounded-xl bg-slate-50 mb-5'>
+      <div className='flex justify-between pb-1 mb-2 border-b-2 border-black'>
+        <h1 className='text-2xl font-semibold self-end'>INFO</h1>
+        <Button size={'sm'}>Update</Button>
+      </div>
+      <div className='flex flex-wrap gap-x-20'>
+        <p>Name: {product.name}</p>
+        <p>Quantity: {product.quantity}</p>
+        <p>Sold: {product.total_sold_items}</p>
+        <p>Description: {product.description}</p>
+      </div>
+    </div>
+  )
+}
+
+function PriceSection({product}:SectionProps) {
   return (
     <div className='p-3 rounded-xl bg-slate-50'>
       <div className='flex justify-between pb-1 mb-2 border-b-2 border-black'>
-        <h1 className='text-2xl font-semibold self-end'>Price</h1>
+        <h1 className='text-2xl font-semibold self-end'>PRICE</h1>
         {product.discount ?
           <DeleteDiscountDialog productID={product.id} />
           :
