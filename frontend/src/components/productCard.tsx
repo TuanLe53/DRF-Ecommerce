@@ -21,7 +21,6 @@ interface ButtonProps{
 
 export default function ProductCard({product}:ProductCardProps) {
     const router = useRouterState();
-    console.log(product.images)
     return (
             <div
                 className="w-56 h-80 bg-slate-50 relative hover:cursor-pointer hover:shadow-2xl"
@@ -47,8 +46,8 @@ export default function ProductCard({product}:ProductCardProps) {
                     <div className="flex flex-col">
                     {product.discount &&
                     <>                    
-                        <Badge>{product.discount}</Badge>
-                        <p className="line-through">{formattedVND(product.final_price)}</p>
+                        <Badge className="self-end">{product.discount}%</Badge>
+                        <p className="self-end line-through">{formattedVND(product.price)}</p>
                     </>    
                     }
                     <p className="self-end justify-self-end text-orange-500 text-2xl">{formattedVND(product.final_price)}</p>
@@ -64,7 +63,7 @@ function GroupButtons({productSlug}:ButtonProps) {
     
     return (
         <Popover>
-            <PopoverTrigger className="hover:bg-slate-50 rounded-md">
+            <PopoverTrigger className="hover:bg-slate-300 rounded-md">
                 <Ellipsis />
             </PopoverTrigger>
             <PopoverContent className="w-28">
@@ -84,10 +83,12 @@ function GroupButtons({productSlug}:ButtonProps) {
 function EditProduct({productSlug}:ButtonProps) {
     
     return (
-        <div className="flex justify-between items-center rounded-lg p-1 hover:bg-slate-100 hover:cursor-pointer">
-            <p>Edit</p>
-            <Pencil size={20} />
-        </div>
+        <Link to="/products/$productSlug/edit" params={{productSlug: productSlug}}>
+            <div className="flex justify-between items-center rounded-lg p-1 hover:bg-slate-100 hover:cursor-pointer">
+                <p>Edit</p>
+                <Pencil size={20} />
+            </div>
+        </Link>
     )
 }
 
@@ -117,7 +118,6 @@ function DeleteProduct({productSlug}:ButtonProps) {
             setOpen(false)
         },
         onError: (err) => {
-            console.log(err)
             toast({
                 title: 'Error',
                 description: 'An error occurred. Please try again later.'
