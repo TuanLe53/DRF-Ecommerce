@@ -1,6 +1,16 @@
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/authContext';
+import { formattedVND } from '@/lib/formatCurrency';
 import { Product } from '@/types/product';
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, redirect } from '@tanstack/react-router'
+import { Plus } from 'lucide-react';
+import { FormEventHandler, useState } from 'react';
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
   const res = await fetch(`http://127.0.0.1:8000/products/${productSlug}`);
@@ -41,7 +51,117 @@ function EditProduct() {
       </div>
       <div className='flex-grow bg-purple-300'>
         <p>Form sections</p>
+        <PriceSection product={product}/>
       </div>
     </div>
+  )
+}
+
+interface PriceProps{
+  product: Product;
+}
+
+function PriceSection({product}:PriceProps) {
+  return (
+    <div>
+      <div className='flex justify-between'>
+        <h1>Price</h1>
+        {product.discount ?
+          <Button>Delete discount</Button>
+          :
+          <AddDiscountDialog productID={product.id}/> 
+      }
+      </div>
+      <div className='flex gap-20'>
+        <p>Current price: {formattedVND(product.price)}</p>
+        <p>Discount: <Badge>{product.discount ? product.discount : '0%'}</Badge></p>
+        <p>Final price: {formattedVND(product.final_price)}</p>
+      </div>
+    </div>
+  )
+}
+
+interface AddDiscountDialogProps{
+  productID: string;
+}
+
+function AddDiscountDialog({productID}:AddDiscountDialogProps) {
+  const { authState } = useAuth();
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const [percentage, setPercentage] = useState<number>(0);
+
+  const {toast} = useToast();
+
+  const cancelDialog = () => {
+    setPercentage(0)
+    setOpen(false)
+  }
+
+  const {mutate:addDiscount, isPending} = useMutation({
+    mutationFn: async () => {
+      const res = await fetch('http://127.0.0.1:8000/products/discount/', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${authState.authToken}`,
+          'Content-type': 'application/json'
+        },
+        body: JSON.stringify({percentage, product:productID})
+      })
+      console.log(res.status)
+      const x = await res.json()
+      console.log(x)
+      if (res.status !== 201) {
+        throw Error('Failed. Please try again later')
+      }
+    },
+    onError: (err) => {
+      toast({
+        title: 'Error',
+        description: err.message
+      })
+      cancelDialog()
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Add discount successfully'
+      })
+      cancelDialog()
+    }
+  })
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    addDiscount()
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setOpen}>
+      <DialogTrigger>
+        <Button><Plus />Add discount</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Add Discount</DialogTitle>
+          <DialogDescription>Add discount to your product</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit}>
+          <Input
+            placeholder='Enter your discount percentage'
+            type='number'
+            min={1}
+            max={100}
+            step={1}
+            value={percentage}
+            onChange={(e) => setPercentage(Number(e.target.value))}
+            required
+          />
+          <DialogFooter>
+            <Button type='button' onClick={cancelDialog}>Cancel</Button>
+            <Button type='submit' disabled={isPending}>Add</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
