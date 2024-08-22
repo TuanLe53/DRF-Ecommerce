@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Product, ProductImages, Category, Inventory, Discount
+from orders.models import OrderItem
 from django.utils.text import slugify
 
 def calculate_final_price(product):
@@ -9,6 +10,8 @@ def calculate_final_price(product):
         return product.price - (product.price * float(percentage)/100)
     except Discount.DoesNotExist:
         return product.price
+def get_total_sold_items(product):
+    return len(OrderItem.objects.filter(product=product))
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -48,10 +51,11 @@ class ProductSerializer(serializers.ModelSerializer):
 
     discount = serializers.CharField(source="discount.percentage", read_only=True)
     final_price = serializers.SerializerMethodField("get_final_price")
+    total_sold_items = serializers.SerializerMethodField("count_sold_items")
 
     class Meta: 
         model = Product
-        fields = ("id", "name", "slug", "price", "description", "categories", "quantity", "images", "discount", "final_price")
+        fields = ("id", "name", "slug", "price", "description", "categories", "quantity", "images", "discount", "final_price", "total_sold_items")
         lookup_field = 'slug'
         extra_kwargs = {
             "id": {"read_only": True}
@@ -59,6 +63,8 @@ class ProductSerializer(serializers.ModelSerializer):
         
     def get_final_price(self, obj):
         return calculate_final_price(obj)
+    def count_sold_items(self, obj):
+        return get_total_sold_items(obj)
         
 class ProductBasicInfoSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField("get_image")
