@@ -1,3 +1,4 @@
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -51,7 +52,8 @@ function EditProduct() {
       </div>
       <div className='w-3/5 p-2 bg-purple-300'>
         <p>Form sections</p>
-        <InfoSection product={product}/>
+        <InfoSection product={product} />
+        <DescriptionSection product={product}/>
         <PriceSection product={product}/>
       </div>
     </div>
@@ -74,9 +76,23 @@ function InfoSection({product}:SectionProps) {
         <p>Name: {product.name}</p>
         <p>Quantity: {product.quantity}</p>
         <p>Sold: {product.total_sold_items}</p>
-        <p>Description: {product.description}</p>
       </div>
     </div>
+  )
+}
+
+function DescriptionSection({ product }: SectionProps) {
+  return (
+    <Accordion type='single' collapsible className='px-3 rounded-xl bg-slate-50 mb-5'>
+      <AccordionItem value='item-1'>
+        <AccordionTrigger className='flex justify-between pb-1 mb-2 border-b-2 border-black hover:no-underline'>
+          <h1 className='text-2xl font-semibold self-end'>DESCRIPTION</h1>
+        </AccordionTrigger>
+        <AccordionContent>
+          {product.description}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   )
 }
 
