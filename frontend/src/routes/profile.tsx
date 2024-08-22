@@ -1,4 +1,5 @@
 import AddProductDialog from '@/components/addProductDialog';
+import ProductCard from '@/components/productCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/authContext';
 import { Product } from '@/types/product';
@@ -33,7 +34,7 @@ function Profile() {
     const profile = Route.useLoaderData();
 
     return (
-        <div className='flex gap-10 pt-8 px-20 bg-green-200'>
+        <div className='h-full flex gap-10 pt-8 px-20 bg-green-200'>
             <div className='w-1/4 p-2 rounded-xl flex flex-col items-center bg-blue-200'>
                 <Avatar className='h-20 w-20'>
                     <AvatarImage src={profile.avatar} />
@@ -91,13 +92,11 @@ function ProductList() {
             {products.length === 0 ?    
                 <p className='text-center text-4xl'>No products</p>
                 :
-                <ul>
+                <div>
                     {products.map((product) => (
-                        <li key={product.id}>
-                            <p>{product.name}</p>
-                        </li>
+                    <ProductCard product={product} key={product.id}/>
                     ))}
-                </ul>
+                </div>
             }
         </div>
     )
