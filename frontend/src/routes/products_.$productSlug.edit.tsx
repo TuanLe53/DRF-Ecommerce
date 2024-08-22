@@ -67,7 +67,7 @@ function PriceSection({product}:PriceProps) {
       <div className='flex justify-between'>
         <h1>Price</h1>
         {product.discount ?
-          <Button>Delete discount</Button>
+          <DeleteDiscountDialog productID={product.id} />
           :
           <AddDiscountDialog productID={product.id}/> 
       }
@@ -81,11 +81,11 @@ function PriceSection({product}:PriceProps) {
   )
 }
 
-interface AddDiscountDialogProps{
+interface DiscountDialogProps{
   productID: string;
 }
 
-function AddDiscountDialog({productID}:AddDiscountDialogProps) {
+function AddDiscountDialog({productID}:DiscountDialogProps) {
   const { authState } = useAuth();
   const [isOpen, setOpen] = useState<boolean>(false);
   const [percentage, setPercentage] = useState<number>(0);
@@ -161,6 +161,59 @@ function AddDiscountDialog({productID}:AddDiscountDialogProps) {
             <Button type='submit' disabled={isPending}>Add</Button>
           </DialogFooter>
         </form>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+function DeleteDiscountDialog({ productID }: DiscountDialogProps) {
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const { authState } = useAuth();
+  const { toast } = useToast();
+
+  const {mutate:deleteDiscount, isPending} = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`http://127.0.0.1:8000/products/discount/${productID}`,{
+        method: 'DELETE',
+        headers: {'Authorization': `Bearer ${authState.authToken}`}
+      })
+
+      if (res.status !== 204) {
+        throw Error('Failed')
+      }
+    },
+    onError: (err) => {
+      toast({
+        title: 'Error',
+        description: err.message
+      })
+      setOpen(false)
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Delete discount successfully'
+      })
+      setOpen(false)
+    }
+  })
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setOpen} >
+      <DialogTrigger>
+        <Button>Delete Discount</Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Delete discount</DialogTitle>
+          <DialogDescription>
+            Delete discount of this product?
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button type='button' onClick={() => setOpen(false)}>Cancel</Button>
+          <Button type='button' onClick={() => deleteDiscount()}>Yes</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
