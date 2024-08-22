@@ -8,6 +8,7 @@ export interface Product{
     discount: number;
     price: number;
     final_price: number;
+    total_sold_items: number;
     images: ProductImage[];
 }
 
