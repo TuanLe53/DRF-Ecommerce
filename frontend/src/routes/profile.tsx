@@ -34,26 +34,30 @@ function Profile() {
     const profile = Route.useLoaderData();
 
     return (
-        <div className='h-full flex gap-10 pt-8 px-20 bg-green-200'>
-            <div className='w-1/4 p-2 rounded-xl flex flex-col items-center bg-blue-200'>
-                <Avatar className='h-20 w-20'>
-                    <AvatarImage src={profile.avatar} />
-                    <AvatarFallback>
-                        <UserRound />
-                    </AvatarFallback>
-                </Avatar>
-                <p>{profile.user.first_name} {profile.user.last_name}</p>
-                <div className='w-full'>
-                    <p>Email: {profile.user.email}</p>
-                    <p>Phone: {profile.phone_number}</p>
+        <div className='flex gap-10 py-8 px-20 bg-green-200'>
+            <div className='w-1/4'>
+                <div className='p-2 rounded-xl flex flex-col items-center bg-blue-200'>
+                    <Avatar className='h-20 w-20'>
+                        <AvatarImage src={profile.avatar} />
+                        <AvatarFallback>
+                            <UserRound />
+                        </AvatarFallback>
+                    </Avatar>
+                    <p>{profile.user.first_name} {profile.user.last_name}</p>
+                    <div className='w-full'>
+                        <p>Email: {profile.user.email}</p>
+                        <p>Phone: {profile.phone_number}</p>
+                        <p>City: {profile.city}</p>
+                        <p>Address: {profile.address}</p>
+                    </div>
                 </div>
             </div>
             <div className='grow'>
-                <div className='p-2 rounded-xl bg-slate-50'>
+                <div className='p-2 mb-5 rounded-xl bg-slate-100'>
                     <h1 className='text-2xl'>{profile.shop_name}</h1>
                     <p>{profile.description}</p>
                 </div>
-                <div className='p-2 rounded-xl bg-slate-200'>
+                <div className='p-2 rounded-xl bg-slate-100'>
                     <div className='flex justify-between items-center'>
                         <h1 className='text-2xl font-semibold'>Products</h1>
                         <AddProductDialog />
@@ -88,7 +92,7 @@ function ProductList() {
     if(isError) return <div>Error</div>
 
     return (
-        <div className='flex gap-5 flex-wrap'>
+        <div className='flex gap-8 flex-wrap'>
             {products.length === 0 ?    
                 <p className='text-center text-4xl'>No products</p>
                 :
