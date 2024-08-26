@@ -3,15 +3,20 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
 import { Product } from '@/types/product';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, redirect, useRouter } from '@tanstack/react-router'
-import { Plus } from 'lucide-react';
+import { Plus, Pencil } from 'lucide-react';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
   const res = await fetch(`http://127.0.0.1:8000/products/${productSlug}`);
@@ -50,7 +55,7 @@ function EditProduct() {
           <CarouselNext />
         </Carousel>
       </div>
-      <div className='w-3/5 p-2 bg-purple-300'>
+      <div className='w-3/5 p-2'>
         <p>Form sections</p>
         <InfoSection product={product} />
         <DescriptionSection product={product}/>
@@ -70,7 +75,7 @@ function InfoSection({product}:SectionProps) {
     <div className='p-3 rounded-xl bg-slate-50 mb-5'>
       <div className='flex justify-between pb-1 mb-2 border-b-2 border-black'>
         <h1 className='text-2xl font-semibold self-end'>INFO</h1>
-        <Button size={'sm'}>Update</Button>
+        <UpdateDialog product={product}/>
       </div>
       <div className='flex flex-wrap gap-x-20'>
         <p>Name: {product.name}</p>
@@ -78,6 +83,152 @@ function InfoSection({product}:SectionProps) {
         <p>Sold: {product.total_sold_items}</p>
       </div>
     </div>
+  )
+}
+
+const updateFormSchema = z.object({
+  name: z.string().min(6).max(125),
+  quantity: z.number().min(1),
+  description: z.string().min(50).max(255),
+  price: z.number().min(1000)
+})
+
+function UpdateDialog({product}:SectionProps) {
+  const { authState } = useAuth();
+
+  const router = useRouter();
+  const {toast} = useToast();
+
+  const [isOpen, setOpen] = useState<boolean>(false);
+
+  const form = useForm<z.infer<typeof updateFormSchema>>({
+    resolver: zodResolver(updateFormSchema),
+    defaultValues: {
+      name: product.name,
+      description: product.description,
+      price: product.price
+    }
+  })
+
+  const updateRequest = async (values: z.infer<typeof updateFormSchema>) => {
+    const body = new FormData();
+    body.append('name', values.name);
+    body.append('description', values.description);
+    body.append('price', values.price.toString());
+
+    const res = await fetch(`http://127.0.0.1:8000/products/${product.slug}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${authState.authToken}`,
+      },
+      body: body
+    })
+
+    const data = await res.json();
+
+    if (res.status !== 200) {
+      throw data
+    }
+
+    return data
+  }
+
+  const {mutate:doUpdate, isPending} = useMutation({
+    mutationFn: updateRequest,
+    onError: (err) => {
+      console.log(err)
+      toast({
+        title: 'Error',
+        description: 'An error has occurred. Please try again later.'
+      })
+      setOpen(false)
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'The product has been successfully updated.'
+      })
+      setOpen(false)
+      router.invalidate()
+    }
+  })
+
+  const handleSubmit = (values: z.infer<typeof updateFormSchema>) => {
+    doUpdate(values)
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setOpen}>
+      <DialogTrigger>
+        <Button size={'sm'}>Update<Pencil size={15}/></Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Update product</DialogTitle>
+          <DialogDescription>Update product</DialogDescription>
+        </DialogHeader>
+
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSubmit)}>
+            <FormField
+              control={form.control}
+              name='name'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product's Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='price'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product's Price</FormLabel>
+                  <FormControl>
+                    <Input type='number' {...field} onChange={(e) => field.onChange(Number(e.target.value))}/>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='description'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product's Description</FormLabel>
+                  <FormControl>
+                    <Textarea {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div>
+              <Button
+                type='button'
+                onClick={() => setOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type='submit'
+                disabled={isPending}
+              >
+                Update
+              </Button>
+            </div>
+          </form>
+        </Form>
+
+      </DialogContent>
+    </Dialog>
   )
 }
 
