@@ -15,7 +15,6 @@ import { useAuth } from '@/contexts/authContext';
 
 const formSchema = z.object({
     name: z.string().min(6).max(125),
-    sku: z.string().min(6).max(50),
     description: z.string().min(50),
     price: z.number().min(1000),
     quantity: z.number().gt(0),
@@ -29,7 +28,6 @@ export default function AddProductDialog() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             name: '',
-            sku: '',
             description: '',
             price: 0,
             quantity: 0,
@@ -53,7 +51,6 @@ export default function AddProductDialog() {
 
         const formData = new FormData();
         formData.append('name', data.name);
-        formData.append('sku', data.sku);
         formData.append('description', data.description);
         formData.append('price', data.price.toString());
         formData.append('quantity', data.quantity.toString());
@@ -111,20 +108,6 @@ export default function AddProductDialog() {
                                             <FormLabel>Product's Name</FormLabel>
                                             <FormControl>
                                                 <Input placeholder='Enter your product name' {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                ></FormField>
-
-                                <FormField
-                                    control={form.control}
-                                    name='sku'
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Product's SKU</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder='Enter your product sku' {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
