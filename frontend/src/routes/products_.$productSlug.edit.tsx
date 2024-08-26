@@ -210,7 +210,7 @@ function UpdateDialog({product}:SectionProps) {
               )}
             />
 
-            <div>
+            <div className='p-2 flex justify-end gap-x-2'>
               <Button
                 type='button'
                 onClick={() => setOpen(false)}
@@ -219,6 +219,7 @@ function UpdateDialog({product}:SectionProps) {
               </Button>
               <Button
                 type='submit'
+                className='bg-sky-500 hover:bg-sky-400'
                 disabled={isPending}
               >
                 Update
