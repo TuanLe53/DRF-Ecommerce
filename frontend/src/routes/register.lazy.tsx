@@ -47,10 +47,7 @@ function Register() {
   const [direction, setDirection] = useState(1);
   const [ref, bounds] = useMeasure();
 
-  const STEP_COMPONENTS = [
-    1,
-    2
-  ]
+  const STEPS = 2;
 
   const handleSetStep = (newStep: number) => {
     setDirection(newStep > step ? 1 : -1)
@@ -72,7 +69,7 @@ function Register() {
 
   useEffect(() => {
     if (step < 0) setStep(0);
-    if (step >= STEP_COMPONENTS.length) setStep(STEP_COMPONENTS.length - 1);
+    if (step >= STEPS) setStep(STEPS - 1);
   }, [step]);
 
   return (
@@ -235,20 +232,22 @@ function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
     }
   });
 
-  const register = async (data: any) => {
+  const register = async (body: any) => {
     const res = await fetch('http://127.0.0.1:8000/vendor/new/', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(body)
     });
+
+    const data = await res.json();
 
     if (res.status !== 201) {
       throw new Error('Please try again later.')
     }
 
-    return res.json()
+    return data
   }
 
   const {mutate: doRegister, isPending} = useMutation({
