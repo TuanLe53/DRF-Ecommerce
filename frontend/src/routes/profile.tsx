@@ -49,11 +49,11 @@ function Profile() {
                 </div>
             </div>
             <div className='grow'>
-                <div>
-                    <h1>{profile.shop_name}</h1>
+                <div className='p-2 rounded-xl bg-slate-50'>
+                    <h1 className='text-2xl'>{profile.shop_name}</h1>
                     <p>{profile.description}</p>
                 </div>
-                <div className='bg-red-200'>
+                <div className='p-2 rounded-xl bg-slate-200'>
                     <div className='flex justify-between items-center'>
                         <h1 className='text-2xl font-semibold'>Products</h1>
                         <AddProductDialog />
@@ -88,15 +88,15 @@ function ProductList() {
     if(isError) return <div>Error</div>
 
     return (
-        <div>
+        <div className='flex gap-5 flex-wrap'>
             {products.length === 0 ?    
                 <p className='text-center text-4xl'>No products</p>
                 :
-                <div>
-                    {products.map((product) => (
-                    <ProductCard product={product} key={product.id}/>
-                    ))}
-                </div>
+                <>                
+                {products.map((product) => (
+                <ProductCard product={product} key={product.id}/>
+                ))}
+                </>
             }
         </div>
     )
