@@ -12,6 +12,7 @@ import CategoriesDropdown from './categoriesDropdown';
 import { Label } from './ui/label';
 import { ScrollArea, ScrollBar } from './ui/scroll-area';
 import { useAuth } from '@/contexts/authContext';
+import { useToast } from './ui/use-toast';
 
 const formSchema = z.object({
     name: z.string().min(6).max(125),
@@ -22,6 +23,8 @@ const formSchema = z.object({
 
 export default function AddProductDialog() {
     const { authState } = useAuth();
+    const { toast } = useToast();
+
     const [isOpen, setOpen] = useState<boolean>(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -63,9 +66,6 @@ export default function AddProductDialog() {
             formData.append("categories", category);
         })
 
-        for (var pair of formData.entries()) {
-            console.log(pair[0]+ ', ' + pair[1]); 
-        }
         const res = await fetch('http://127.0.0.1:8000/products/', {
             method: 'POST',
             headers: {
@@ -74,13 +74,17 @@ export default function AddProductDialog() {
             body: formData
         })
 
-        // const x = await res.json();
-
         if (res.status === 201) {
-            console.log('success')
             setOpen(false)
+            toast({
+                title: 'Success',
+                description: 'Your product has been added to your vendor.'
+            })
         } else {
-            console.log('failed')
+            toast({
+                title: 'Error',
+                description: 'Something went wrong while trying to add your product to the vendor’s inventory. Please check your details and try again. If the issue persists, don’t hesitate to contact our support team for assistance.'
+            })
         }
     }
 
