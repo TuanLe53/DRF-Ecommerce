@@ -14,18 +14,18 @@ import { Textarea } from '@/components/ui/textarea'
 
 
 const userInfoFormSchema = z.object({
-  first_name: z.string().max(50).min(1),
-  last_name: z.string().max(50).min(1),
+  first_name: z.string().max(50, {message: 'First name is too long'}).min(1, {message: 'First name is too short'}),
+  last_name: z.string().max(50, {message: 'Last name is too long'}).min(1, {message: 'Last name is too short'}),
   email: z.string().email(),
   password: z.string().min(6, { message: "Password is too short" }).max(50, { message: "Password is too long" }),
   user_type: z.enum(['VENDOR', 'CUSTOMER'])
 });
 
 const vendorFormSchema = z.object({
-  shop_name: z.string().min(10).max(50),
-  description: z.string().min(50).max(255),
-  address: z.string().min(10).max(125),
-  city: z.string().min(3).max(125),
+  shop_name: z.string().min(10, {message: 'Shop name is too short'}).max(50, {message: 'Shop name is too long'}),
+  description: z.string().min(50, {message: 'Your description is too short'}).max(255, {message: 'Your description is too long'}),
+  address: z.string().min(10, {message: 'Your address is too short'}).max(125, {message: 'Your address is too long'}),
+  city: z.string().min(3, {message: 'City name is too short'}).max(125, {message: 'City name is too long'}),
   phone_number: z.string().min(10).max(11)
 });
 
