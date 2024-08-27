@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import useMeasure from 'react-use-measure'
 import { TransitionPanel } from '@/components/ui/transitionPanel'
 import { useMutation } from '@tanstack/react-query'
+import { Textarea } from '@/components/ui/textarea'
 
 
 const userInfoFormSchema = z.object({
@@ -248,7 +249,11 @@ function FormFieldComponent({name, control, label, placeholder}:FormFieldCompone
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Input placeholder={placeholder} {...field} />
+            {name === 'description' ?
+              <Textarea placeholder={placeholder} {...field} />
+            :
+              <Input placeholder={placeholder} {...field} />
+            }
           </FormControl>
           <FormDescription>This is your public vendor's {label.toLowerCase()}</FormDescription>
           <FormMessage />
