@@ -16,9 +16,9 @@ const userInfoFormSchema = z.object({
   first_name: z.string().max(50).min(1),
   last_name: z.string().max(50).min(1),
   email: z.string().email(),
-  password: z.string().min(6,  { message: "Password is too short" }).max(50, { message: "Password is too long" }),
+  password: z.string().min(6, { message: "Password is too short" }).max(50, { message: "Password is too long" }),
   user_type: z.enum(['VENDOR', 'CUSTOMER'])
-})
+});
 
 const vendorFormSchema = z.object({
   shop_name: z.string().min(10).max(50),
@@ -26,11 +26,11 @@ const vendorFormSchema = z.object({
   address: z.string().min(10).max(125),
   city: z.string().min(3).max(125),
   phone_number: z.string().min(10).max(11)
-})
+});
 
 export const Route = createLazyFileRoute('/register')({
   component: Register
-})
+});
 
 function Register() {
   const userInfoForm = useForm<z.infer<typeof userInfoFormSchema>>({
@@ -206,49 +206,90 @@ function Register() {
             </form>
           </Form>
 
-          {userInfo.user_type === 'VENDOR' ? <VendorForm userInfo={userInfo} handleSetStep={handleSetStep} step={step}/> : <CustomerForm />}
-
+          <CommonForm handleSetStep={handleSetStep} step={step} userInfo={userInfo} user_type={userInfo.user_type} />
         </TransitionPanel>
       </div>
     </div>
   )
 }
 
-interface VendorFormProps{
-  step: number;
-  handleSetStep: (newStep: number) => void;
-  userInfo: z.infer<typeof userInfoFormSchema>;
-}
-
-function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
-  const form = useForm<z.infer<typeof vendorFormSchema>>({
-    resolver: zodResolver(vendorFormSchema),
-    defaultValues: {
-      shop_name: '',
-      description: '',
-      address: '',
-      city: '',
-      phone_number: ''
-    }
+async function register(body: any){
+  const res = await fetch('http://127.0.0.1:8000/vendor/new/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body)
   });
 
-  const register = async (body: any) => {
-    const res = await fetch('http://127.0.0.1:8000/vendor/new/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(body)
-    });
+  const data = await res.json();
 
-    const data = await res.json();
-
-    if (res.status !== 201) {
-      throw new Error('Please try again later.')
-    }
-
-    return data
+  if (res.status !== 201) {
+    throw new Error('Please try again later.')
   }
+
+  return data
+}
+
+interface FormFieldComponentProps{
+  name: string;
+  control: any;
+  label: string;
+  placeholder: string;
+}
+
+function FormFieldComponent({name, control, label, placeholder}:FormFieldComponentProps) {
+  
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{label}</FormLabel>
+          <FormControl>
+            <Input placeholder={placeholder} {...field} />
+          </FormControl>
+          <FormDescription>This is your public vendor's {label.toLowerCase()}</FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
+};
+
+interface CommonFormProps{
+  user_type: 'VENDOR' | 'CUSTOMER';
+  userInfo: z.infer<typeof userInfoFormSchema>;
+  handleSetStep: (newStep: number) => void;
+  step: number;
+};
+
+function CommonForm({user_type, userInfo, handleSetStep, step}:CommonFormProps) {
+  const formSchema =
+    user_type === 'VENDOR' ?
+      vendorFormSchema :
+      vendorFormSchema.omit({ shop_name: true, description: true });
+  
+  const defaultValues =
+    user_type === 'VENDOR' ?
+      {
+        address: '',
+        city: '',
+        phone_number: ''
+      } :
+      {
+        shop_name: '',
+        description: '',
+        address: '',
+        city: '',
+        phone_number: ''
+      }
+  
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: defaultValues
+  });
 
   const {mutate: doRegister, isPending} = useMutation({
     mutationFn: register,
@@ -260,103 +301,57 @@ function VendorForm({handleSetStep, step, userInfo}: VendorFormProps) {
     }
   });
 
-  const handleSubmit = (values: z.infer<typeof vendorFormSchema>) => {
+  const handleSubmit = (values: z.infer<typeof formSchema>) => {
     const body = {
       ...values,
       user: userInfo
     }
 
     doRegister(body)
-  }
+  };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)}>
-        <FormField
-          control={form.control}
-          name='shop_name'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Shop name</FormLabel>
-              <FormControl>
-                <Input placeholder='Enter your vendor name' {...field} />
-              </FormControl>
-              <FormDescription>This is your public vendor's name</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        >
-        </FormField>
-        <FormField
-          control={form.control}
-          name='description'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input placeholder='Enter your vendor description' {...field} />
-              </FormControl>
-              <FormDescription>This is your public vendor's description</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        >
-        </FormField>
-        <FormField
-          control={form.control}
+        {user_type === 'VENDOR' &&
+          <>
+            <FormFieldComponent
+              name='shop_name'
+              label='Shop name'
+              placeholder='Enter your shop name'
+              control={form.control}
+            />
+            <FormFieldComponent
+              name='description'
+              label='Description'
+              placeholder='Enter your shop description'
+              control={form.control}
+            />
+          </>
+        }
+
+        <FormFieldComponent
           name='address'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input placeholder='Enter your vendor address' {...field} />
-              </FormControl>
-              <FormDescription>This is your public vendor's address</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        >
-        </FormField>
-        <FormField
+          label='Address'
+          placeholder='Enter your address'
           control={form.control}
+        />
+        <FormFieldComponent
           name='city'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>City</FormLabel>
-              <FormControl>
-                <Input placeholder='Enter your vendor city' {...field} />
-              </FormControl>
-              <FormDescription>This is your public vendor's city</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        >
-        </FormField>
-        <FormField
+          label='City'
+          placeholder='Enter your city'
           control={form.control}
+        />
+        <FormFieldComponent
           name='phone_number'
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone number</FormLabel>
-              <FormControl>
-                <Input placeholder='Enter your vendor phone number' {...field} />
-              </FormControl>
-              <FormDescription>This is your public vendor's phone number</FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        >
-        </FormField>
-        
-        <Button onClick={() => handleSetStep(step - 1)}>Back</Button>
+          label='Phone number'
+          placeholder='Enter your phone number'
+          control={form.control}
+        />
+
+        <Button type='button' onClick={() => handleSetStep(step - 1)}>Back</Button>
         <Button type='submit' disabled={isPending}>Register</Button>
       </form>
     </Form>
-  )
-}
-
-function CustomerForm() {
-  return (
-    <p>Customer</p>
   )
 }
