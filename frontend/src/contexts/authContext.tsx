@@ -26,7 +26,7 @@ const initialState = {
     user: {
         username: null,
         id: null,
-        type: null
+        user_type: null
     },
     updateAuthState: (token: string)=>{},
     logout: ()=>{},
@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     const [user, setUser] = useState<User>({
         username: null,
         id: null,
-        type: null
+        user_type: null
     });
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser({
             username: decoded.username,
             id: decoded.id,
-            type: decoded.type
+            user_type: decoded.user_type
         })
     }
 
@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setUser({
             username: null,
             id: null,
-            type: null
+            user_type: null
         })
     }
 
