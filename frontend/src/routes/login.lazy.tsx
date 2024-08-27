@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useToast } from '@/components/ui/use-toast'
 import { useAuth } from '@/contexts/authContext'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMutation } from '@tanstack/react-query'
@@ -18,7 +19,8 @@ export const Route = createLazyFileRoute('/login')({
 })
 
 function Login() {
-  const {updateAuthState} = useAuth();
+  const { updateAuthState } = useAuth();
+  const {toast} = useToast();
   const navigate = useNavigate({from: '/login'});
 
   const loginForm = useForm<z.infer<typeof loginFormSchema>>({
@@ -39,7 +41,7 @@ function Login() {
     const data = await res.json();
 
     if (res.status !== 200) {
-      throw data
+      throw new Error(data.detail)
     }
 
     return data
@@ -48,7 +50,10 @@ function Login() {
   const {mutate: doLogin, isPending} = useMutation({
     mutationFn: login,
     onError: (err) => {
-      console.log(err)
+      toast({
+        title: 'Error',
+        description: err.message
+      })
     },
     onSuccess: (data) => {
       updateAuthState(data.access)
@@ -102,6 +107,7 @@ function Login() {
             <Link to='/register' className='mr-3'>Register</Link>
             <Button
               type='submit'
+              className='bg-sky-500 hover:bg-sky-400'
               disabled={isPending}
             >
               Login
