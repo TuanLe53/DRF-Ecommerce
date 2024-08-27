@@ -1,4 +1,4 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -11,6 +11,7 @@ import useMeasure from 'react-use-measure'
 import { TransitionPanel } from '@/components/ui/transitionPanel'
 import { useMutation } from '@tanstack/react-query'
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/components/ui/use-toast'
 
 
 const userInfoFormSchema = z.object({
@@ -270,7 +271,10 @@ interface CommonFormProps{
   step: number;
 };
 
-function CommonForm({user_type, userInfo, handleSetStep, step}:CommonFormProps) {
+function CommonForm({ user_type, userInfo, handleSetStep, step }: CommonFormProps) {
+  const navigate = useNavigate({ from: '/register' });
+  const {toast} = useToast();
+
   const formSchema =
     user_type === 'VENDOR' ?
       vendorFormSchema :
@@ -300,9 +304,13 @@ function CommonForm({user_type, userInfo, handleSetStep, step}:CommonFormProps) 
     mutationFn: ({body, user_type}:{body:any, user_type: 'VENDOR' | 'CUSTOMER'}) => register(body, user_type),
     onError: (err) => {
       console.log(err)
+      toast({
+        title: 'Error',
+        description: err.message
+      })
     },
     onSuccess: () => {
-      console.log('Success')
+      navigate({to: '/login'})
     }
   });
 
