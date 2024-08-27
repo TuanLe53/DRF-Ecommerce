@@ -214,8 +214,8 @@ function Register() {
   )
 }
 
-async function register(body: any){
-  const res = await fetch('http://127.0.0.1:8000/vendor/new/', {
+async function register(body: any, user_type: 'VENDOR' | 'CUSTOMER') {
+  const res = await fetch(`http://127.0.0.1:8000/${user_type.toLowerCase()}/new/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -297,7 +297,7 @@ function CommonForm({user_type, userInfo, handleSetStep, step}:CommonFormProps) 
   });
 
   const {mutate: doRegister, isPending} = useMutation({
-    mutationFn: register,
+    mutationFn: ({body, user_type}:{body:any, user_type: 'VENDOR' | 'CUSTOMER'}) => register(body, user_type),
     onError: (err) => {
       console.log(err)
     },
@@ -312,7 +312,7 @@ function CommonForm({user_type, userInfo, handleSetStep, step}:CommonFormProps) 
       user: userInfo
     }
 
-    doRegister(body)
+    doRegister({body, user_type})
   };
 
   return (
