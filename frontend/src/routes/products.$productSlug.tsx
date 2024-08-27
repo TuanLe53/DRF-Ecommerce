@@ -1,8 +1,12 @@
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Input } from '@/components/ui/input'
+import { useAuth } from '@/contexts/authContext'
 import { formattedVND } from '@/lib/formatCurrency'
 import { Product } from '@/types/product'
 import { createFileRoute } from '@tanstack/react-router'
+import React from 'react'
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
   const res = await fetch(`http://127.0.0.1:8000/products/${productSlug}`)
@@ -19,6 +23,14 @@ export const Route = createFileRoute('/products/$productSlug')({
 
 function ProductPage() {
   const product = Route.useLoaderData();
+  const { authState, user } = useAuth();
+
+  const isRenderButton = authState.isAuth && user.type === 'CUSTOMER';
+
+  const addToCart = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    alert('Hello Wolrd')
+  }
 
   return (
     <div className='flex p-5'>
@@ -49,6 +61,14 @@ function ProductPage() {
           <h2 className='text-xl'>Description:</h2>
           <p>{product.description}</p>
         </div>
+
+        {isRenderButton &&
+        <form className='flex w-1/4' onSubmit={addToCart}>
+          <Input type='number' placeholder='Quantity' min={1} max={product.quantity} required/>
+          <Button type='submit'>Add to cart</Button>
+        </form>
+        }
+
       </div>
     </div>
   )
