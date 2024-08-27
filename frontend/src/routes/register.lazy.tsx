@@ -354,8 +354,21 @@ function CommonForm({user_type, userInfo, handleSetStep, step}:CommonFormProps) 
           control={form.control}
         />
 
-        <Button type='button' onClick={() => handleSetStep(step - 1)}>Back</Button>
-        <Button type='submit' disabled={isPending}>Register</Button>
+        <div className='flex gap-x-1 justify-end'>
+          <Button
+            type='button'
+            onClick={() => handleSetStep(step - 1)}
+          >
+            Back
+          </Button>
+          <Button
+            type='submit'
+            className='bg-sky-500 hover:bg-sky-400'
+            disabled={isPending}
+          >
+            Register
+          </Button>
+        </div>
       </form>
     </Form>
   )
