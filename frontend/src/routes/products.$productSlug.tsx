@@ -2,11 +2,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Input } from '@/components/ui/input'
+import { useToast } from '@/components/ui/use-toast'
 import { useAuth } from '@/contexts/authContext'
 import { formattedVND } from '@/lib/formatCurrency'
 import { Product } from '@/types/product'
 import { createFileRoute } from '@tanstack/react-router'
-import React from 'react'
+import React, { useState } from 'react'
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
   const res = await fetch(`http://127.0.0.1:8000/products/${productSlug}`)
@@ -24,14 +25,49 @@ export const Route = createFileRoute('/products/$productSlug')({
 function ProductPage() {
   const product = Route.useLoaderData();
   const { authState, user } = useAuth();
+  const { toast } = useToast();
 
-  const isRenderButton = authState.isAuth && user.type === 'CUSTOMER';
+  const isRenderButton = authState.isAuth && user.user_type === 'CUSTOMER';
+
+  const [quantity, setQuantity] = useState<number>(0);
 
   const addToCart = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    alert('Hello Wolrd')
-  }
 
+    const res = await fetch('http://127.0.0.1:8000/customer/cart/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${authState.authToken}`,
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        product: product.id,
+        quantity
+      })
+    })
+
+    if (res.status === 409) {
+      toast({
+        title: 'Error',
+        description: 'Product was already added to your cart.'
+      })
+      setQuantity(0)
+      return;
+    } else if (res.status !== 201) {
+      toast({
+        title: 'Error',
+        description: 'An error has occurred. Please try again later.'
+      })
+      return;
+    }
+
+    toast({
+      title: 'Success',
+      description: 'Product successfully added to cart.'
+    })
+    setQuantity(0);
+  }
+  
   return (
     <div className='flex p-5'>
       <div className='w-2/5 flex flex-col items-center'>
@@ -64,7 +100,15 @@ function ProductPage() {
 
         {isRenderButton &&
         <form className='flex w-1/4' onSubmit={addToCart}>
-          <Input type='number' placeholder='Quantity' min={1} max={product.quantity} required/>
+            <Input
+              type='number'
+              placeholder='Quantity'
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              min={1}
+              max={product.quantity}
+              required
+            />
           <Button type='submit'>Add to cart</Button>
         </form>
         }
