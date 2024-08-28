@@ -106,11 +106,19 @@ function Cart() {
     if (isPending) return <div>Loading...</div>
     if (isError) return <div>Error</div>
 
+    const total_price = cartItems.reduce<number>((total, item) => {
+        return total + (item.product.final_price * item.quantity);
+    }, 0)
+
     return (
-        <div>
-            {cartItems.map((item, index) => (
-                <CartItemCard item={item} key={index}/>
-            ))}
+        <div className='p-2 bg-slate-50'>
+            <h1 className='text-3xl font-medium'>Your Cart</h1>
+            <div className='p-2 flex flex-col gap-5'>
+                {cartItems.map((item, index) => (
+                    <CartItemCard item={item} key={index}/>
+                ))}
+            </div>
+            <p className='text-end text-xl'>Total: {formattedVND(total_price)}</p>
         </div>
     )
 }
@@ -162,7 +170,7 @@ function CartItemCard({item}:CartItemCardProps) {
     }
     
     return (
-        <div className='p-2 relative flex items-center gap-2 bg-slate-50 rounded-xl'>
+        <div className='p-2 relative flex items-center gap-2 bg-gray-100 rounded-xl hover:shadow-2xl'>
             <div className='w-28 h-28'>
                 <Link
                     to='/products/$productSlug'
