@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
 import { formatDateString } from '@/lib/formatDate';
 import { CartItem, Product } from '@/types/product';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { UserRound, CircleMinus } from 'lucide-react';
 
@@ -123,13 +123,38 @@ function CartItemCard({item}:CartItemCardProps) {
     const product = item.product;
     const notional_price = product.final_price * item.quantity;
 
+    const { authState } = useAuth();
     const { toast } = useToast();
 
-    const removeCartItem = async () => {
-        toast({
-            title: 'Success',
-            description: `Successfully removed ${product.name} from your cart`
+    const removeRequest = async () => {
+        const res = await fetch(`http://127.0.0.1:8000/customer/cart/item/${item.id}`, {
+            method: 'DELETE',
+            headers: {'Authorization': `Bearer ${authState.authToken}`}
         })
+
+        if (res.status !== 204) {
+            throw new Error('An error has occurred. Please try again later.')
+        }
+    }
+
+    const {mutate:doDelete} = useMutation({
+        mutationFn: removeRequest,
+        onError: (err) => {
+            toast({
+                title: 'Success',
+                description: err.message
+            })
+        },
+        onSuccess: () => {
+            toast({
+                title: 'Success',
+                description: `Successfully removed ${product.name} from your cart`
+            })
+        }
+    })
+
+    const removeCartItem = async () => {
+        doDelete()
     }
     
     return (
