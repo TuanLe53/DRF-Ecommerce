@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
 import { formatDateString } from '@/lib/formatDate';
 import { CartItem, Product } from '@/types/product';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { UserRound, CircleMinus } from 'lucide-react';
 
@@ -124,6 +124,7 @@ function CartItemCard({item}:CartItemCardProps) {
     const notional_price = product.final_price * item.quantity;
 
     const { authState } = useAuth();
+    const queryClient = useQueryClient();
     const { toast } = useToast();
 
     const removeRequest = async () => {
@@ -141,11 +142,14 @@ function CartItemCard({item}:CartItemCardProps) {
         mutationFn: removeRequest,
         onError: (err) => {
             toast({
-                title: 'Success',
+                title: 'Error',
                 description: err.message
             })
         },
         onSuccess: () => {
+            queryClient.setQueryData<CartItem[]>(['cart_items', { item }], (cartItems) => 
+                cartItems ? cartItems.filter((cartItem) => cartItem.id !== item.id) : cartItems
+            )
             toast({
                 title: 'Success',
                 description: `Successfully removed ${product.name} from your cart`
