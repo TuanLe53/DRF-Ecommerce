@@ -1,11 +1,14 @@
 import AddProductDialog from '@/components/addProductDialog';
 import ProductCard from '@/components/productCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/authContext';
+import { formattedVND } from '@/lib/formatCurrency';
+import { formatDateString } from '@/lib/formatDate';
 import { CartItem, Product } from '@/types/product';
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, redirect } from '@tanstack/react-router';
-import { UserRound } from 'lucide-react';
+import { createFileRoute, Link, redirect } from '@tanstack/react-router';
+import { UserRound, CircleMinus } from 'lucide-react';
 
 const fetchProfile = async (authToken: string) => {
     const res = await fetch('http://127.0.0.1:8000/user/profile/', {
@@ -117,12 +120,48 @@ interface CartItemCardProps{
 }
 
 function CartItemCard({item}:CartItemCardProps) {
-    
     const product = item.product;
+    const notional_price = product.final_price * item.quantity;
 
+    const { toast } = useToast();
+
+    const removeCartItem = async () => {
+        toast({
+            title: 'Success',
+            description: `Successfully removed ${product.name} from your cart`
+        })
+    }
+    
     return (
-        <div>
-            <p>{product.name}</p>
+        <div className='p-2 relative flex items-center gap-2 bg-slate-50 rounded-xl'>
+            <div className='w-28 h-28'>
+                <Link
+                    to='/products/$productSlug'
+                    params={{productSlug: product.slug}}
+                >
+                    <img src={product.images[0].image} className='w-full h-full object-contain'/>
+                </Link>
+            </div>
+            <div className='flex-grow'>
+                <div className='flex justify-between'>
+                    <Link
+                        to='/products/$productSlug'
+                        params={{productSlug: product.slug}}
+                    >
+                        {product.name}
+                    </Link>
+                    <p>Date added to cart: {formatDateString(item.created_at)}</p>
+                </div>
+                <div className='flex justify-between'>
+                    <p>Quantity: {item.quantity}</p>
+                    <p>Notional Price: {formattedVND(notional_price)}</p>
+                </div>
+            </div>
+            <div
+                className='absolute top-1 right-1 p-1 hover:cursor-pointer'
+            >
+                <CircleMinus onClick={removeCartItem} className='text-red-500 hover:text-red-400'/>
+            </div>
         </div>
     )
 }
