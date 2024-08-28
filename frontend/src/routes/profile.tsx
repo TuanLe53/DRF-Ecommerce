@@ -1,6 +1,7 @@
 import AddProductDialog from '@/components/addProductDialog';
 import ProductCard from '@/components/productCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
@@ -112,12 +113,21 @@ function Cart() {
 
     return (
         <div className='p-2 bg-slate-50'>
-            <h1 className='text-3xl font-medium'>Your Cart</h1>
-            <div className='p-2 flex flex-col gap-5'>
+            <div className='flex justify-between items-center'>
+                <h1 className='text-3xl font-medium'>Your Cart</h1>
+                <p className='text-xl'>{cartItems.length} {cartItems.length > 1 ? 'Items' : 'Item'}</p>
+            </div>
+            {cartItems.length > 1 ?
+            <ScrollArea className='h-96'>
                 {cartItems.map((item, index) => (
                     <CartItemCard item={item} key={index}/>
                 ))}
-            </div>
+            </ScrollArea>
+                :
+                <div className='flex items-center justify-center'>
+                    <p className='text-2xl text-gray-400'>You have no items in your cart yet. Let’s add something to it!</p>
+                </div>
+            }
             <p className='text-end text-xl'>Total: {formattedVND(total_price)}</p>
         </div>
     )
@@ -170,7 +180,7 @@ function CartItemCard({item}:CartItemCardProps) {
     }
     
     return (
-        <div className='p-2 relative flex items-center gap-2 bg-gray-100 rounded-xl hover:shadow-2xl'>
+        <div className='my-3 p-2 relative flex items-center gap-2 bg-gray-100 rounded-xl hover:shadow-2xl'>
             <div className='w-28 h-28'>
                 <Link
                     to='/products/$productSlug'
