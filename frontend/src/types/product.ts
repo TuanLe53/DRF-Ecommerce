@@ -21,3 +21,12 @@ export interface Category{
     description: string;
     slug: string;
 }
+
+export interface CartItem{
+    id: number;
+    cart: string;
+    product: Product;
+    quantity: number;
+    created_at: string;
+    updated_at: string;
+}
