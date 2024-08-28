@@ -2,7 +2,7 @@ import AddProductDialog from '@/components/addProductDialog';
 import ProductCard from '@/components/productCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/authContext';
-import { Product } from '@/types/product';
+import { CartItem, Product } from '@/types/product';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { UserRound } from 'lucide-react';
@@ -32,6 +32,7 @@ export const Route = createFileRoute('/profile')({
 
 function Profile() {
     const profile = Route.useLoaderData();
+    const { user } = useAuth();
 
     return (
         <div className='flex gap-10 py-8 px-20 bg-green-200'>
@@ -53,19 +54,75 @@ function Profile() {
                 </div>
             </div>
             <div className='grow'>
-                <div className='p-2 mb-5 rounded-xl bg-slate-100'>
-                    <h1 className='text-2xl'>{profile.shop_name}</h1>
-                    <p>{profile.description}</p>
-                </div>
-                <div className='p-2 rounded-xl bg-slate-100'>
-                    <div className='flex justify-between items-center'>
-                        <h1 className='text-2xl font-semibold'>Products</h1>
-                        <AddProductDialog />
-                    </div>
-                    
-                    <ProductList />
-                </div>
+                {user.user_type === 'VENDOR' ?
+                    <>                    
+                        <div className='p-2 mb-5 rounded-xl bg-slate-100'>
+                            <h1 className='text-2xl'>{profile.shop_name}</h1>
+                            <p>{profile.description}</p>
+                        </div>
+                        <div className='p-2 rounded-xl bg-slate-100'>
+                            <div className='flex justify-between items-center'>
+                                <h1 className='text-2xl font-semibold'>Products</h1>
+                                <AddProductDialog />
+                            </div>
+                            
+                            <ProductList />
+                        </div>
+                    </>
+                    :
+                    <>
+                        <Cart />
+                    </>
+                }
             </div>
+        </div>
+    )
+}
+
+function Cart() {
+    const { authState } = useAuth();
+
+    const fetchCartItems = async (): Promise<CartItem[]> => {
+        const res = await fetch('http://127.0.0.1:8000/customer/cart/', {
+            headers: { 'Authorization': `Bearer ${authState.authToken}` }, 
+        });
+        const data = await res.json();
+
+        if (res.status !== 200) {
+            throw new Error('An error has occurred. Please try again later.')
+        }
+
+        return data
+    }
+
+    const { isPending, isError, data: cartItems } = useQuery({
+        queryKey: ['cart_items'],
+        queryFn: fetchCartItems,
+    })
+
+    if (isPending) return <div>Loading...</div>
+    if (isError) return <div>Error</div>
+
+    return (
+        <div>
+            {cartItems.map((item, index) => (
+                <CartItemCard item={item} key={index}/>
+            ))}
+        </div>
+    )
+}
+
+interface CartItemCardProps{
+    item: CartItem;
+}
+
+function CartItemCard({item}:CartItemCardProps) {
+    
+    const product = item.product;
+
+    return (
+        <div>
+            <p>{product.name}</p>
         </div>
     )
 }
