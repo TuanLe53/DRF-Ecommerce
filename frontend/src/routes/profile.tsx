@@ -1,3 +1,4 @@
+import AddPaymentDialog from '@/components/addPaymentDialog';
 import AddProductDialog from '@/components/addProductDialog';
 import ProductCard from '@/components/productCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -296,7 +297,7 @@ function Payments() {
         <div className='p-2 bg-slate-50'>
             <div className='flex justify-between items-center'>
                 <h1 className='text-3xl font-medium'>Your Payments</h1>
-                <Button>Add</Button>
+                <AddPaymentDialog />
             </div>
             {payments.length > 0 ?
                 <ScrollArea className='h-96'>
