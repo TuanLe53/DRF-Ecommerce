@@ -225,7 +225,12 @@ interface OrderDialogProps{
 }
 
 function OrderDialog({items}:OrderDialogProps) {
-    const [paymentMethod, setPaymentMethod] = useState<'COD' | 'CREDIT_CARD' | ''>('');
+    const [paymentMethod, setPaymentMethod] = useState<string>('');
+
+
+    const handleClick = async () => {
+        console.log(paymentMethod)
+    } 
 
     return (
         <Dialog>
@@ -238,7 +243,7 @@ function OrderDialog({items}:OrderDialogProps) {
                     <DialogDescription>Order</DialogDescription>
                 </DialogHeader>
                 <div>
-                    <Select>
+                    <Select onValueChange={(e) => setPaymentMethod(e)}>
                         <SelectTrigger>
                             <SelectValue placeholder='Place select your payment method'/>
                         </SelectTrigger>
@@ -254,7 +259,7 @@ function OrderDialog({items}:OrderDialogProps) {
                 </div>
                 <DialogFooter>
                     <Button type='button'>Close</Button>
-                    <Button type='button'>Yes</Button>
+                    <Button type='button' onClick={handleClick}>Yes</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
