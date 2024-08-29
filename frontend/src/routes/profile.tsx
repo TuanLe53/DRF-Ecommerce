@@ -10,6 +10,7 @@ import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
 import { formatDateString } from '@/lib/formatDate';
 import { CartItem, Product } from '@/types/product';
+import { Payment } from '@/types/user';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { UserRound, CircleMinus } from 'lucide-react';
@@ -78,9 +79,10 @@ function Profile() {
                         </div>
                     </>
                     :
-                    <>
+                    <div className='flex flex-col gap-5'>
                         <Cart />
-                    </>
+                        <Payments />
+                    </div>
                 }
             </div>
         </div>
@@ -265,6 +267,51 @@ function OrderDialog({items}:OrderDialogProps) {
         </Dialog>
     )
 }
+
+function Payments() {
+    const { authState } = useAuth();
+
+    const fetchPayments = async (): Promise<Payment[]> => {
+        const res = await fetch('http://127.0.0.1:8000/payments/', {
+            headers: { 'Authorization': `Bearer ${authState.authToken}` }
+        });
+        const data = await res.json();
+
+        if (res.status !== 200) {
+            throw new Error('An error has occurred. Please try again later.')
+        }
+
+        return data;
+    }
+
+    const { isPending, isError, data: payments } = useQuery({
+        queryKey: ['payments'],
+        queryFn: fetchPayments,
+    });
+
+    if (isPending) return <div>Loading...</div>
+    if (isError) return <div>Error</div>
+
+    return (
+        <div className='p-2 bg-slate-50'>
+            <div className='flex justify-between items-center'>
+                <h1 className='text-3xl font-medium'>Your Payments</h1>
+                <Button>Add</Button>
+            </div>
+            {payments.length > 0 ?
+                <ScrollArea className='h-96'>
+                    {payments.map((payment, index) => (
+                        <p key={index}>{payment.account_number}</p>
+                    ))}
+                </ScrollArea>
+                :
+                <div className='flex items-center justify-center'>
+                    <p className='text-2xl text-gray-400'>You have no payments yet. Let’s add one now!</p>
+                </div>
+            }
+        </div>
+    )
+};
 
 function ProductList() {
     const { authState } = useAuth();
