@@ -1,7 +1,10 @@
 import AddProductDialog from '@/components/addProductDialog';
 import ProductCard from '@/components/productCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
@@ -10,6 +13,7 @@ import { CartItem, Product } from '@/types/product';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { UserRound, CircleMinus } from 'lucide-react';
+import { useState } from 'react';
 
 const fetchProfile = async (authToken: string) => {
     const res = await fetch('http://127.0.0.1:8000/user/profile/', {
@@ -117,7 +121,7 @@ function Cart() {
                 <h1 className='text-3xl font-medium'>Your Cart</h1>
                 <p className='text-xl'>{cartItems.length} {cartItems.length > 1 ? 'Items' : 'Item'}</p>
             </div>
-            {cartItems.length > 1 ?
+            {cartItems.length > 0 ?
             <ScrollArea className='h-96'>
                 {cartItems.map((item, index) => (
                     <CartItemCard item={item} key={index}/>
@@ -128,7 +132,10 @@ function Cart() {
                     <p className='text-2xl text-gray-400'>You have no items in your cart yet. Let’s add something to it!</p>
                 </div>
             }
-            <p className='text-end text-xl'>Total: {formattedVND(total_price)}</p>
+            <div className='flex justify-end items-center gap-3'>
+                <p className='text-xl'>Total: {formattedVND(total_price)}</p>
+                <OrderDialog items={cartItems}/>
+            </div>
         </div>
     )
 }
@@ -210,6 +217,47 @@ function CartItemCard({item}:CartItemCardProps) {
                 <CircleMinus onClick={removeCartItem} className='text-red-500 hover:text-red-400'/>
             </div>
         </div>
+    )
+}
+
+interface OrderDialogProps{
+    items: CartItem[];
+}
+
+function OrderDialog({items}:OrderDialogProps) {
+    const [paymentMethod, setPaymentMethod] = useState<'COD' | 'CREDIT_CARD' | ''>('');
+
+    return (
+        <Dialog>
+            <DialogTrigger>
+                <Button type='button' className='bg-sky-500 hover:bg-sky-400'>Order</Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Order</DialogTitle>
+                    <DialogDescription>Order</DialogDescription>
+                </DialogHeader>
+                <div>
+                    <Select>
+                        <SelectTrigger>
+                            <SelectValue placeholder='Place select your payment method'/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value='COD'>
+                                COD
+                            </SelectItem>
+                            <SelectItem value='CREDIT_CARD'>
+                                Credit card
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
+                <DialogFooter>
+                    <Button type='button'>Close</Button>
+                    <Button type='button'>Yes</Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     )
 }
 
