@@ -1,5 +1,6 @@
 import AddPaymentDialog from '@/components/addPaymentDialog';
 import AddProductDialog from '@/components/addProductDialog';
+import PaymentCard from '@/components/paymentCard';
 import ProductCard from '@/components/productCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -175,7 +176,7 @@ function CartItemCard({item}:CartItemCardProps) {
             })
         },
         onSuccess: () => {
-            queryClient.setQueryData<CartItem[]>(['cart_items', { item }], (cartItems) => 
+            queryClient.setQueryData<CartItem[]>(['cart_items'], (cartItems) => 
                 cartItems ? cartItems.filter((cartItem) => cartItem.id !== item.id) : cartItems
             )
             toast({
@@ -300,9 +301,9 @@ function Payments() {
                 <AddPaymentDialog />
             </div>
             {payments.length > 0 ?
-                <ScrollArea className='h-96'>
+                <ScrollArea className='h-60'>
                     {payments.map((payment, index) => (
-                        <p key={index}>{payment.account_number}</p>
+                        <PaymentCard key={index} payment={payment}/>
                     ))}
                 </ScrollArea>
                 :
