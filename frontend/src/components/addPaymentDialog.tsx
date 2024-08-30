@@ -60,16 +60,18 @@ export default function AddPaymentDialog() {
                 title: "Error",
                 description: err.message
             })
+            closeDialog()
         },
         onSuccess: () => {
             toast({
                 title: "Success",
                 description: "Created"
             })
+            closeDialog()
         }
     })
 
-    const handleCancel = () => {
+    const closeDialog = () => {
         setOpen(false)
         form.reset()
     }
@@ -165,7 +167,7 @@ export default function AddPaymentDialog() {
                             )}
                         />
                         <DialogFooter>
-                            <Button type="button" onClick={handleCancel}>Cancel</Button>
+                            <Button type="button" onClick={closeDialog}>Cancel</Button>
                             <Button type="submit" disabled={isPending}>Create</Button>
                         </DialogFooter>
                     </form>
