@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Button } from "./ui/button"
 import { useAuth } from "@/contexts/authContext"
 import { useToast } from "./ui/use-toast"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface PaymentCardProps{
     payment: Payment
@@ -35,6 +35,7 @@ function DeletePayment({paymentID}:DeletePaymentProps) {
     const [isOpen, setOpen] = useState<boolean>(false);
     const { authState } = useAuth();
     const { toast } = useToast();
+    const queryClient = useQueryClient();
 
     const deleteRequest = async () => {
         const res = await fetch(`http://127.0.0.1:8000/payments/${paymentID}`, {
@@ -51,6 +52,9 @@ function DeletePayment({paymentID}:DeletePaymentProps) {
     const {mutate:handleClick, isPending} = useMutation({
         mutationFn: deleteRequest,
         onSuccess: () => {
+            queryClient.setQueryData<Payment[]>(['payments'], (payments) =>
+                payments ? payments.filter((payment) => payment.id !== paymentID) : payments
+            )
             toast({
                 title: 'Success',
                 description: 'Product have been deleted'
