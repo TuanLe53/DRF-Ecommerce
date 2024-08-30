@@ -7,6 +7,7 @@ from customers.models import Customer
 
 from .serializers import PaymentSerializer
 from .models import Payment
+from .permissions import IsPaymentOwner
 
 # Create your views here.
 class ListCreatePayment(generics.ListCreateAPIView):
@@ -32,3 +33,8 @@ class ListCreatePayment(generics.ListCreateAPIView):
         serializer.save(customer=customer)
         
         return Response(serializer.data, status=201)
+    
+class DeletePaymentMethod(generics.DestroyAPIView):
+    queryset = Payment.objects.all()
+    serializer_class = PaymentSerializer
+    permission_classes = (IsPaymentOwner, )
