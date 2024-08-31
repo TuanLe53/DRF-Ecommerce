@@ -13,7 +13,8 @@ import { Calendar } from "./ui/calendar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { useAuth } from "@/contexts/authContext";
 import { useToast } from "./ui/use-toast";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Payment } from "@/types/user";
 
 const formSchema = z.object({
     provider: z.enum(["VISA", "MASTERCARD"]),
@@ -25,6 +26,7 @@ export default function AddPaymentDialog() {
     const { authState } = useAuth();
     const { toast } = useToast();
     const [isOpen, setOpen] = useState<boolean>(false);
+    const queryClient = useQueryClient();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -62,7 +64,10 @@ export default function AddPaymentDialog() {
             })
             closeDialog()
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
+            queryClient.setQueryData<Payment[]>(["payments"], (payments) =>
+                payments ? [data, ...payments] : [data]
+            )
             toast({
                 title: "Success",
                 description: "Created"
