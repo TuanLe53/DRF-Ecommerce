@@ -81,6 +81,7 @@ function Profile() {
                     <div className='flex flex-col gap-5'>
                         <Cart />
                         <Payments />
+                        <Orders />
                     </div>
                 }
             </div>
@@ -270,6 +271,40 @@ function Payments() {
         </div>
     )
 };
+
+function Orders() {
+    const { authState } = useAuth();
+
+    const fetchPayments = async (): Promise<Payment[]> => {
+        const res = await fetch('http://127.0.0.1:8000/order/', {
+            headers: { 'Authorization': `Bearer ${authState.authToken}` }
+        });
+        const data = await res.json();
+
+        if (res.status !== 200) {
+            throw new Error('An error has occurred. Please try again later.')
+        }
+
+        return data;
+    }
+
+    const { isPending, isError, data: orders } = useQuery({
+        queryKey: ['orders'],
+        queryFn: fetchPayments,
+    });
+
+    if (isPending) return <div>Loading...</div>
+    if (isError) return <div>Error</div>
+
+    return (
+        <div className='p-2 bg-slate-50'>
+            <h1 className='text-3xl font-medium'>Your Orders</h1>
+            {orders.map((order) => (
+                <p>{order.id}</p>
+            ))}
+        </div>
+    )
+}
 
 function ProductList() {
     const { authState } = useAuth();
