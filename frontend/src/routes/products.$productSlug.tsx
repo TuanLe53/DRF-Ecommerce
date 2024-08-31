@@ -1,3 +1,4 @@
+import CreateOrder from '@/components/createOrder'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
@@ -68,6 +69,8 @@ function ProductPage() {
     setQuantity(0);
   }
   
+  const orderItems = [{product_id: product.id, quantity}]
+
   return (
     <div className='flex p-5'>
       <div className='w-2/5 flex flex-col items-center'>
@@ -99,18 +102,21 @@ function ProductPage() {
         </div>
 
         {isRenderButton &&
-        <form className='flex w-1/4' onSubmit={addToCart}>
-            <Input
-              type='number'
-              placeholder='Quantity'
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              min={1}
-              max={product.quantity}
-              required
-            />
-          <Button type='submit'>Add to cart</Button>
-        </form>
+          <>
+          <form className='flex w-1/4' onSubmit={addToCart}>
+              <Input
+                type='number'
+                placeholder='Quantity'
+                value={quantity}
+                onChange={(e) => setQuantity(Number(e.target.value))}
+                min={1}
+                max={product.quantity}
+                required
+              />
+            <CreateOrder items={orderItems} disable={quantity < 1 || quantity > product.quantity} />
+            <Button type='submit'>Add to cart</Button>
+          </form>
+          </>
         }
 
       </div>
