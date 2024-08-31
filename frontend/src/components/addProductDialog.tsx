@@ -13,6 +13,8 @@ import { Label } from './ui/label';
 import { ScrollArea, ScrollBar } from './ui/scroll-area';
 import { useAuth } from '@/contexts/authContext';
 import { useToast } from './ui/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { Product } from '@/types/product';
 
 const formSchema = z.object({
     name: z.string().min(6).max(125),
@@ -24,7 +26,7 @@ const formSchema = z.object({
 export default function AddProductDialog() {
     const { authState } = useAuth();
     const { toast } = useToast();
-
+    const queryClient = useQueryClient();
     const [isOpen, setOpen] = useState<boolean>(false);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -74,7 +76,12 @@ export default function AddProductDialog() {
             body: formData
         })
 
+        
         if (res.status === 201) {
+            const newProduct = await res.json()
+            queryClient.setQueryData<Product[]>(['user_products'], (products) =>
+                products ? [...newProduct, products] : [newProduct]
+            )
             setOpen(false)
             toast({
                 title: 'Success',
@@ -92,8 +99,8 @@ export default function AddProductDialog() {
 
     return (
         <Dialog open={isOpen} onOpenChange={setOpen}>
-            <DialogTrigger>
-                <Button><Plus />Add Product</Button>
+            <DialogTrigger type="button" className="p-2 rounded-md flex bg-sky-500 hover:bg-sky-400">
+                <Plus />Add Product
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

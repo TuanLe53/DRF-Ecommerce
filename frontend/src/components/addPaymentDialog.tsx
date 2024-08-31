@@ -88,8 +88,8 @@ export default function AddPaymentDialog() {
 
     return (
         <Dialog open={isOpen} onOpenChange={setOpen}>
-            <DialogTrigger>
-                <Button><Plus />Add Payment</Button>
+            <DialogTrigger type="button" className="p-2 rounded-md flex bg-sky-500 hover:bg-sky-400">
+                <Plus />Add Payment
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
