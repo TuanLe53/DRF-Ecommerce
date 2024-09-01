@@ -12,6 +12,11 @@ export interface Product{
     images: ProductImage[];
 }
 
+export interface ProductBasicInfo extends Pick<Product, "id" | "name" | "slug"> {
+    image: string;
+    price: string;
+}
+
 interface ProductImage{
     image: string;
 }
