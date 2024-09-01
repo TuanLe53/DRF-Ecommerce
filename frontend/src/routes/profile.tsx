@@ -309,12 +309,12 @@ function Orders() {
         <div className='p-2 bg-slate-50'>
             <h1 className='text-3xl font-medium'>Your Orders</h1>
             {orders.map((order) => (
-                <div key={order.id}>
-                    <div className='flex justify-between'>
+                <div key={order.id} className='bg-gray-200 rounded-xl p-2 my-3 hover:shadow-2xl'>
+                    <div className='flex justify-between border-b border-black'>
                         <p>#{order.id}</p>
                         <p className={setStatusColor(order)}>{order.status}</p>
                     </div>
-                    <div className='flex justify-between'>
+                    <div className='flex gap-10'>
                         <p>Order Date: {formatDateString(order.created_at)}</p>
                         <p>Total: {formattedVND(order.total_price)}</p>
                         <p>Payment type: {order.payment_type}</p>
