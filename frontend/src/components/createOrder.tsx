@@ -25,7 +25,7 @@ interface CreateOrderProps{
 }
 
 const baseSchema = z.object({
-    address: z.string().min(10).max(255).optional()
+    address: z.string().optional()
 })
 
 const formSchema = z.discriminatedUnion(
@@ -115,7 +115,7 @@ export default function CreateOrder({items, disable=false}: CreateOrderProps) {
 
     return (
         <Dialog open={isOpen} onOpenChange={setOpen}>
-            <DialogTrigger disabled={disable} className="p-2 rounded-md bg-sky-400">
+            <DialogTrigger type="button" disabled={disable} className="p-2 rounded-md bg-sky-400">
                 Order
             </DialogTrigger>
             <DialogContent>
