@@ -36,12 +36,17 @@ class ListCreateOrder(generics.ListCreateAPIView):
             payment = None
         elif request.data["payment_type"] == "CREDIT_CARD":
             payment = get_object_or_404(Payment, id=request.data["payment"])
+            
+        if request.data["address"]:
+            address = request.data["address"]
+        else:
+            address = customer.address
         
         order = Order.objects.create(
             customer=customer,
             payment=payment,
             payment_type=request.data["payment_type"],
-            address=customer.address,
+            address=address,
             status="PROCESSING",
             total_price=0
         )
