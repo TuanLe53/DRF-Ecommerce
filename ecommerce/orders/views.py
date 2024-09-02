@@ -7,6 +7,7 @@ from django.db.models import Q
 
 from .serializers import OrderSerializer, OrderItemSerializer, OrderFieldSerializer, OrderDetailSerializer
 from .models import Order, OrderItem
+from .permissions import IsOrderOwner
 
 from customers.models import Customer, Cart, CartItem
 from payments.models import Payment
@@ -78,7 +79,7 @@ class ListCreateOrder(generics.ListCreateAPIView):
 
 class RetrieveOrder(generics.RetrieveAPIView):
     serializer_class = OrderDetailSerializer
-    permission_classes = (IsAuthenticated, )
+    permission_classes = (IsOrderOwner, )
     queryset = Order.objects.all()
 
 class ListOrderItem(generics.ListAPIView):
