@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
 import { formatDateString } from '@/lib/formatDate';
+import { setStatusColor } from '@/lib/formatStyles';
 import { OrderBasicInfo } from '@/types/order';
 import { CartItem, Product } from '@/types/product';
 import { Payment } from '@/types/user';
@@ -297,30 +298,32 @@ function Orders() {
     if (isPending) return <div>Loading...</div>
     if (isError) return <div>Error</div>
     
-    const setStatusColor = (order: OrderBasicInfo):string=>{
-        return order.status === 'RECEIVED'
-        ? 'text-green-500'
-        : order.status ==='DELIVERING'
-            ? 'text-orange-500'
-            : '';
-    }
-    
     return (
         <div className='p-2 bg-slate-50'>
             <h1 className='text-3xl font-medium'>Your Orders</h1>
-            {orders.map((order) => (
-                <div key={order.id} className='bg-gray-200 rounded-xl p-2 my-3 hover:shadow-2xl'>
-                    <div className='flex justify-between border-b border-black'>
-                        <p>#{order.id}</p>
-                        <p className={setStatusColor(order)}>{order.status}</p>
-                    </div>
-                    <div className='flex gap-10'>
-                        <p>Order Date: {formatDateString(order.created_at)}</p>
-                        <p>Total: {formattedVND(order.total_price)}</p>
-                        <p>Payment type: {order.payment_type}</p>
-                    </div>
-                </div>
-            ))}
+            {orders.length > 0 ?
+                <ScrollArea className='h-60'>
+                    {orders.map((order) => (
+                        <div key={order.id} className='bg-gray-200 rounded-xl p-2 my-3 hover:shadow-2xl hover:cursor-pointer'>
+                            <Link to='/orders/$orderID' params={{orderID: order.id}}>
+                                <div className='flex justify-between border-b border-black'>
+                                    <p>#{order.id}</p>
+                                    <p className={setStatusColor(order.status)}>{order.status}</p>
+                                </div>
+                                <div className='flex gap-10'>
+                                    <p>Order Date: {formatDateString(order.created_at)}</p>
+                                    <p>Total: {formattedVND(order.total_price)}</p>
+                                    <p>Payment type: {order.payment_type}</p>
+                                </div>
+                            </Link>
+                        </div>
+                    ))}
+                </ScrollArea>
+            :            
+                <div className='flex items-center justify-center'>
+                    <p className='text-2xl text-gray-400'>You have no payments yet. Let’s add one now!</p>
+                </div>    
+            }
         </div>
     )
 }
