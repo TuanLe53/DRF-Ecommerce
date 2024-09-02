@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as ProfileImport } from './routes/profile'
 import { Route as ProductsProductSlugImport } from './routes/products.$productSlug'
+import { Route as OrdersOrderIDImport } from './routes/orders.$orderID'
 import { Route as ProductsProductSlugEditImport } from './routes/products_.$productSlug.edit'
 
 // Create Virtual Routes
@@ -53,6 +54,11 @@ const IndexLazyRoute = IndexLazyImport.update({
 
 const ProductsProductSlugRoute = ProductsProductSlugImport.update({
   path: '/products/$productSlug',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const OrdersOrderIDRoute = OrdersOrderIDImport.update({
+  path: '/orders/$orderID',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -100,6 +106,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterLazyImport
       parentRoute: typeof rootRoute
     }
+    '/orders/$orderID': {
+      id: '/orders/$orderID'
+      path: '/orders/$orderID'
+      fullPath: '/orders/$orderID'
+      preLoaderRoute: typeof OrdersOrderIDImport
+      parentRoute: typeof rootRoute
+    }
     '/products/$productSlug': {
       id: '/products/$productSlug'
       path: '/products/$productSlug'
@@ -125,6 +138,7 @@ export const routeTree = rootRoute.addChildren({
   AboutLazyRoute,
   LoginLazyRoute,
   RegisterLazyRoute,
+  OrdersOrderIDRoute,
   ProductsProductSlugRoute,
   ProductsProductSlugEditRoute,
 })
@@ -142,6 +156,7 @@ export const routeTree = rootRoute.addChildren({
         "/about",
         "/login",
         "/register",
+        "/orders/$orderID",
         "/products/$productSlug",
         "/products/$productSlug/edit"
       ]
@@ -160,6 +175,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/register": {
       "filePath": "register.lazy.tsx"
+    },
+    "/orders/$orderID": {
+      "filePath": "orders.$orderID.tsx"
     },
     "/products/$productSlug": {
       "filePath": "products.$productSlug.tsx"
