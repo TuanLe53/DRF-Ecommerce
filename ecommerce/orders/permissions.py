@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 
 class IsOrderOwner(BasePermission):
-    accept_methods = ("PUT", "DELETE", "GET")
+    accept_methods = ("PUT", "PATCH", "DELETE", "GET")
 
     def has_permission(self, request, view):
         if request.user.is_authenticated and request.user.user_type == "CUSTOMER":
