@@ -38,41 +38,47 @@ class ListCreateOrder(generics.ListCreateAPIView):
             payment = None
         elif request.data["payment_type"] == "CREDIT_CARD":
             payment = get_object_or_404(Payment, id=request.data["payment"])
-            
-        if request.data["address"]:
-            address = request.data["address"]
         else:
-            address = customer.address
+            return Response({"detail": "Invalid payment type."}, status=400)
         
-        order = Order.objects.create(
-            customer=customer,
-            payment=payment,
-            payment_type=request.data["payment_type"],
-            address=address,
-            status="PROCESSING",
-            total_price=0
-        )
+        address = request.data.get("address", customer.address)
         
-        pd_list = request.data["products"]
-        
-        total_price = 0
-        for item in pd_list:
-            pd = Product.objects.get(id=item["product_id"])
-            price = pd.final_price * item["quantity"]
-            
-            #Remove product from cart
-            CartItem.objects.filter(cart=cart, product=pd).delete()
-            
-            OrderItem.objects.create(
-                product=pd,
-                order=order,
-                quantity=item["quantity"],
-                total_price=price
+        with transaction.atomic():            
+            order = Order.objects.create(
+                customer=customer,
+                payment=payment,
+                payment_type=request.data["payment_type"],
+                address=address,
+                status="PROCESSING",
+                total_price=0
             )
-            total_price += price
             
-        order.total_price = total_price
-        order.save()
+            pd_list = request.data["products"]
+            
+            total_price = 0
+            for item in pd_list:
+                product_id = item.get("product_id")
+                quantity = item.get("quantity")
+
+                if not product_id and not quantity:
+                    continue
+                
+                pd = get_object_or_404(Product, id=product_id)
+                price = pd.final_price * quantity
+                
+                #Remove product from cart
+                CartItem.objects.filter(cart=cart, product=pd).delete()
+                
+                OrderItem.objects.create(
+                    product=pd,
+                    order=order,
+                    quantity=item["quantity"],
+                    total_price=price
+                )
+                total_price += price
+                
+            order.total_price = total_price
+            order.save()
         
         serializer = OrderSerializer(order)
         
