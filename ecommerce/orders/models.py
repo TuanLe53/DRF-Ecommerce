@@ -7,6 +7,7 @@ from products.models import Product
 # Create your models here.
 class Order(models.Model):
     STATUS_CHOICES = (
+        ("CANCEL", "Cancel"),
         ("PROCESSING","Processing"),
         ("DELIVERING", "Delivering"),
         ("RECEIVED", "Received"),
