@@ -1,8 +1,12 @@
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
+import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
 import { formatDateString } from '@/lib/formatDate';
 import { setStatusColor } from '@/lib/formatStyles';
 import { Order } from '@/types/order';
-import { createFileRoute, Link, redirect } from '@tanstack/react-router'
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 
 const fetchOrder = async (orderID: string, authToken:string): Promise<Order> => {
   const res = await fetch(`http://127.0.0.1:8000/order/${orderID}`,{
@@ -31,8 +35,45 @@ function OrderDetailPage() {
   const order = Route.useLoaderData();
   const orderItems = order.items;
 
+  const { authState } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  const cancelOrderRequest = async () => {
+    const res = await fetch(`http://127.0.0.1:8000/order/${order.id}/cancel/`, {
+      method: 'PATCH',
+      headers: {'Authorization': `Bearer ${authState.authToken}`}
+    })
+    const data = await res.json();
+
+    if (!res.ok) return new Error('An error has occurred. Please try again later.');
+
+    return data
+  }
+
+  const {mutate:doCancel, isPending} = useMutation({
+    mutationFn: cancelOrderRequest,
+    onError: (err) => {
+      toast({
+        title: 'Error',
+        description: err.message
+      })
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Order canceled successfully.'
+      })
+      navigate({to: '/profile'})
+    }
+  })
+
+  const handleClick = () => {
+    doCancel()
+  }
+
   return (
-    <div className='flex justify-center items-center p-5'>
+    <div className='flex flex-col justify-center items-center p-5'>
       <div className='w-1/3 p-2 rounded-md bg-gray-300'>
         <div className='flex justify-between border-dashed border-black border-b text-lg'>
           <h1>#{order.id}</h1>
@@ -42,10 +83,11 @@ function OrderDetailPage() {
           <p className='text-xl font-semibold'>ITEMS</p>
           {orderItems.map((item, index) => (
             <Link
+              key={index}
               to='/products/$productSlug'
               params={{productSlug: item.product.slug}}
             >              
-              <div key={index} className='flex items-center p-2 hover:bg-slate-300 hover:shadow-xl hover:cursor-pointer'>
+              <div className='flex items-center p-2 hover:bg-slate-300 hover:shadow-xl hover:cursor-pointer'>
                 <div className='w-24 h-24'>
                   <img src={item.product.image} className='h-full w-full object-contain'/>
                 </div>
@@ -76,6 +118,11 @@ function OrderDetailPage() {
             <p>{formattedVND(order.total_price)}</p>
           </div>
         </div>
+      </div>
+      <div>
+        {order.status === 'PROCESSING' &&
+          <Button onClick={handleClick} disabled={isPending} type='button'>Cancel</Button>
+        }
       </div>
     </div>
   )
