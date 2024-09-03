@@ -6,7 +6,7 @@ export interface Order {
     address: string;
     payment_type: "COD" | "CREDIT_CARD";
     payment: string;
-    status: "PROCESSING" | "DELIVERING" | "RECEIVED";
+    status: "PROCESSING" | "DELIVERING" | "RECEIVED" | "CANCEL";
     created_at: string;
     updated_at: string;
     items: OrderItemBasicInfo[];
@@ -20,7 +20,7 @@ export interface OrderItem{
     quantity: number;
     total_price: number;
     created_at: string;
-    order_status: "PROCESSING" | "DELIVERING" | "RECEIVED";
+    order_status: "PROCESSING" | "DELIVERING" | "RECEIVED" | "CANCEL";
     product: ProductBasicInfo;
 }
 
