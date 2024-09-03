@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.db import transaction
 
 from .serializers import OrderSerializer, OrderItemSerializer, OrderFieldSerializer, OrderDetailSerializer
 from .models import Order, OrderItem
@@ -81,6 +82,29 @@ class RetrieveOrder(generics.RetrieveAPIView):
     serializer_class = OrderDetailSerializer
     permission_classes = (IsOrderOwner, )
     queryset = Order.objects.all()
+
+class CancelOrder(generics.UpdateAPIView):
+    queryset = Order.objects.all()
+    serializer_class = OrderDetailSerializer
+    permission_classes = (IsOrderOwner, )
+    
+    def patch(self, request, *args, **kwargs):
+        order = self.get_object()
+        
+        if order.status != "PROCESSING":
+            return Response(
+                {"detail": "Order cannot be canceled because it is not in a pending state."},
+                status=400
+            )
+
+        with transaction.atomic():
+            order.status = "CANCELLED"
+            order.save()
+            
+            OrderItem.objects.filter(order=order).delete()
+
+        serializer = self.get_serializer(order)
+        return Response(serializer.data)        
 
 class ListOrderItem(generics.ListAPIView):
     serializer_class = OrderItemSerializer
