@@ -3,6 +3,7 @@ import AddProductDialog from '@/components/addProductDialog';
 import CreateOrder from '@/components/createOrder';
 import PaymentCard from '@/components/paymentCard';
 import ProductCard from '@/components/productCard';
+import StatusSelector from '@/components/statusSelector';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useToast } from '@/components/ui/use-toast';
@@ -10,12 +11,13 @@ import { useAuth } from '@/contexts/authContext';
 import { formattedVND } from '@/lib/formatCurrency';
 import { formatDateString } from '@/lib/formatDate';
 import { setStatusColor } from '@/lib/formatStyles';
-import { OrderBasicInfo } from '@/types/order';
+import { OrderBasicInfo, statusValues } from '@/types/order';
 import { CartItem, Product } from '@/types/product';
 import { Payment } from '@/types/user';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { UserRound, CircleMinus } from 'lucide-react';
+import { useState } from 'react';
 
 const fetchProfile = async (authToken: string) => {
     const res = await fetch('http://127.0.0.1:8000/user/profile/', {
@@ -276,9 +278,10 @@ function Payments() {
 
 function Orders() {
     const { authState } = useAuth();
+    const [status, setStatus] = useState<statusValues | ''>('');
 
     const fetchPayments = async (): Promise<OrderBasicInfo[]> => {
-        const res = await fetch('http://127.0.0.1:8000/order/', {
+        const res = await fetch(`http://127.0.0.1:8000/order/?status=${status}`, {
             headers: { 'Authorization': `Bearer ${authState.authToken}` }
         });
         const data = await res.json();
@@ -291,7 +294,7 @@ function Orders() {
     }
 
     const { isPending, isError, data: orders } = useQuery({
-        queryKey: ['orders'],
+        queryKey: ['orders', status],
         queryFn: fetchPayments,
     });
 
@@ -300,7 +303,10 @@ function Orders() {
     
     return (
         <div className='p-2 bg-slate-50'>
-            <h1 className='text-3xl font-medium'>Your Orders</h1>
+            <div className='flex justify-between'>
+                <h1 className='text-3xl font-medium'>Your Orders</h1>
+                <StatusSelector status={status} setStatus={setStatus}/>
+            </div>
             {orders.length > 0 ?
                 <ScrollArea className='h-60'>
                     {orders.map((order) => (
