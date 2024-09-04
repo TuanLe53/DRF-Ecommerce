@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.db import transaction
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .serializers import OrderSerializer, OrderItemSerializer, OrderFieldSerializer, OrderDetailSerializer
 from .models import Order, OrderItem
@@ -19,6 +20,8 @@ class ListCreateOrder(generics.ListCreateAPIView):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticated, )
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["status"]
     
     def get_queryset(self):
         customer = get_object_or_404(Customer, user=self.request.user)
