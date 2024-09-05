@@ -1,4 +1,6 @@
 import ProductCard from '@/components/productCard';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { toTitleCase } from '@/lib/formatStyles';
 import { Product } from '@/types/product';
 import { useQuery } from '@tanstack/react-query';
 import { createLazyFileRoute } from '@tanstack/react-router'
@@ -9,10 +11,18 @@ export const Route = createLazyFileRoute('/')({
 
 function Index() {
   return (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
-      <ProductsByCategoryCarousel category='shirts'/>
-      <ProductsByCategoryCarousel category='sneaker'/>
+    <div className='flex gap-10 p-5'>
+      <div className='border-black border-r-2 w-1/5'>
+        <h1>Category</h1>
+        <ul>
+          <li>Shirts</li>
+          <li>Sneaker</li>
+        </ul>
+      </div>
+      <div>
+        <ProductsByCategoryCarousel category='shirts'/>
+        <ProductsByCategoryCarousel category='sneaker'/>
+      </div>
     </div>
   )
 }
@@ -39,9 +49,18 @@ function ProductsByCategoryCarousel({category}:ProductsByCategoryCarouselProps) 
 
   return (
     <div>
-      {products.map((product, index) => (
-        <ProductCard product={product} key={index}/>
-      ))}
+      <h1 className='text-3xl'>{toTitleCase(category)}</h1>
+      <Carousel>
+        <CarouselContent>
+          {products.map((product) => (
+            <CarouselItem key={product.id} className='basis-1/2'>
+              <ProductCard product={product}/>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </div>
   )
 }
