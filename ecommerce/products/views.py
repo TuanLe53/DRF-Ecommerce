@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 from django.utils.text import slugify
 from datetime import datetime
 from django.db import transaction
+from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework import generics
 from rest_framework.response import Response
@@ -12,6 +13,7 @@ from rest_framework.parsers import MultiPartParser
 from .serializers import CategorySerializer, ProductSerializer
 from .models import Category, Product, ProductImages, Inventory, Discount
 from .permissions import IsVendor, IsProductOwner
+from .filters import ProductFilterByCategory
 from vendors.models import Vendor
 
 # Create your views here.
@@ -24,6 +26,8 @@ class ListCreateProduct(generics.ListCreateAPIView):
     pagination_class = LimitOffsetPagination
     serializer_class = ProductSerializer
     parser_classes = [MultiPartParser]
+    filter_backends =   [DjangoFilterBackend]
+    filterset_class = ProductFilterByCategory
     
     def get_permissions(self):
         if self.request.method == "GET":
