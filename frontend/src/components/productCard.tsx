@@ -117,7 +117,7 @@ function DeleteProduct({productSlug}:ButtonProps) {
             })
             setOpen(false)
         },
-        onError: (err) => {
+        onError: () => {
             toast({
                 title: 'Error',
                 description: 'An error occurred. Please try again later.'
