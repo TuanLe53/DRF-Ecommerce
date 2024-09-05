@@ -6,7 +6,9 @@ import { formatDateString } from '@/lib/formatDate';
 import { setStatusColor } from '@/lib/formatStyles';
 import { Order } from '@/types/order';
 import { useMutation } from '@tanstack/react-query';
-import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router';
+import { CircleX } from 'lucide-react';
+
 
 const fetchOrder = async (orderID: string, authToken:string): Promise<Order> => {
   const res = await fetch(`http://127.0.0.1:8000/order/${orderID}`,{
@@ -121,7 +123,15 @@ function OrderDetailPage() {
       </div>
       <div>
         {order.status === 'PROCESSING' &&
-          <Button onClick={handleClick} disabled={isPending} type='button'>Cancel</Button>
+          <Button
+            onClick={handleClick}
+            disabled={isPending}
+            type='button'
+            className='flex flex-col items-center border-2 border-red-500 bg-white h-20 w-20 text-red-500 hover:bg-red-500 hover:text-white'
+          >
+            <CircleX />
+            <p>Cancel</p>
+          </Button>
         }
       </div>
     </div>
