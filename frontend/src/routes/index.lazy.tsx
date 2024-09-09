@@ -1,9 +1,9 @@
 import ProductCard from '@/components/productCard';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
 import { toTitleCase } from '@/lib/formatStyles';
 import { Product } from '@/types/product';
 import { useQuery } from '@tanstack/react-query';
-import { createLazyFileRoute } from '@tanstack/react-router'
+import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
 
 export const Route = createLazyFileRoute('/')({
   component: Index,
@@ -19,7 +19,7 @@ function Index() {
           <li>Sneaker</li>
         </ul>
       </div>
-      <div>
+      <div className='w-4/5 flex flex-col gap-5'>
         <ProductsByCategoryCarousel category='shirts'/>
         <ProductsByCategoryCarousel category='sneaker'/>
       </div>
@@ -31,12 +31,14 @@ interface ProductsByCategoryCarouselProps{
   category: string;
 }
 
-function ProductsByCategoryCarousel({category}:ProductsByCategoryCarouselProps) {
+function ProductsByCategoryCarousel({ category }: ProductsByCategoryCarouselProps) {
+  const navigate = useNavigate({from: '/'});
+
   const fetchProducts = async ():Promise<Product[]> => {
-    const res = await fetch(`http://127.0.0.1:8000/products/?category=${category}`);
+    const res = await fetch(`http://127.0.0.1:8000/products/?category=${category}&limit=4`);
     if(!res.ok) throw new Error('An error has occurred. Please try again later.')
-  
-    return await res.json();
+    const data = await res.json();
+    return data.results;
   }
 
   const {isPending, isError, data: products} = useQuery({
@@ -48,19 +50,19 @@ function ProductsByCategoryCarousel({category}:ProductsByCategoryCarouselProps) 
   if(isError) return <div>Error</div>
 
   return (
-    <div>
+    <div className='bg-slate-200'>
       <h1 className='text-3xl'>{toTitleCase(category)}</h1>
-      <Carousel>
-        <CarouselContent>
-          {products.map((product) => (
-            <CarouselItem key={product.id} className='basis-1/2'>
-              <ProductCard product={product}/>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
-      </Carousel>
+      <div className='flex gap-5 items-center'>
+        {products.map((pd) => (
+          <ProductCard product={pd} key={pd.id} />
+        ))}
+        <Button
+          type='button'
+          onClick={() => navigate({to:`/${category}`},)}
+        >
+          More
+        </Button>
+      </div>
     </div>
   )
 }
