@@ -59,6 +59,7 @@ function ProductsByCategoryCarousel({ category }: ProductsByCategoryCarouselProp
         <Button
           type='button'
           onClick={() => navigate({to:`/${category}`},)}
+          className='rounded-full w-12 h-12 bg-white border-orange-500 border-2 text-orange-500 hover:bg-orange-500 hover:text-white'
         >
           More
         </Button>
