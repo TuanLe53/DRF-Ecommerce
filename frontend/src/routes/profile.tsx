@@ -20,7 +20,7 @@ import { UserRound, CircleMinus } from 'lucide-react';
 import { useState } from 'react';
 
 const fetchProfile = async (authToken: string) => {
-    const res = await fetch('http://127.0.0.1:8000/user/profile/', {
+    const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/user/profile/', {
         headers: { 'Authorization': `Bearer ${authToken}` },
     });
 
@@ -97,7 +97,7 @@ function Cart() {
     const { authState } = useAuth();
 
     const fetchCartItems = async (): Promise<CartItem[]> => {
-        const res = await fetch('http://127.0.0.1:8000/customer/cart/', {
+        const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/customer/cart/', {
             headers: { 'Authorization': `Bearer ${authState.authToken}` }, 
         });
         const data = await res.json();
@@ -164,7 +164,7 @@ function CartItemCard({item}:CartItemCardProps) {
     const { toast } = useToast();
 
     const removeRequest = async () => {
-        const res = await fetch(`http://127.0.0.1:8000/customer/cart/item/${item.id}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/customer/cart/item/${item.id}`, {
             method: 'DELETE',
             headers: {'Authorization': `Bearer ${authState.authToken}`}
         })
@@ -235,7 +235,7 @@ function Payments() {
     const { authState } = useAuth();
 
     const fetchPayments = async (): Promise<Payment[]> => {
-        const res = await fetch('http://127.0.0.1:8000/payments/', {
+        const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/payments/', {
             headers: { 'Authorization': `Bearer ${authState.authToken}` }
         });
         const data = await res.json();
@@ -281,7 +281,7 @@ function Orders() {
     const [status, setStatus] = useState<statusValues | ''>('');
 
     const fetchPayments = async (): Promise<OrderBasicInfo[]> => {
-        const res = await fetch(`http://127.0.0.1:8000/order/?status=${status}`, {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order/?status=${status}`, {
             headers: { 'Authorization': `Bearer ${authState.authToken}` }
         });
         const data = await res.json();
@@ -338,7 +338,7 @@ function ProductList() {
     const { authState } = useAuth();
     
     const fetchProducts = async (): Promise<Product[]> => {
-        const res = await fetch('http://127.0.0.1:8000/products/vendor/', {
+        const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/products/vendor/', {
             headers: { 'Authorization': `Bearer ${authState.authToken}` },
         })
         const data = await res.json();

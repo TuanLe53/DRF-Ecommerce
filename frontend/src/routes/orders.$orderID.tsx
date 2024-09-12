@@ -11,7 +11,7 @@ import { CircleX } from 'lucide-react';
 
 
 const fetchOrder = async (orderID: string, authToken:string): Promise<Order> => {
-  const res = await fetch(`http://127.0.0.1:8000/order/${orderID}`,{
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order/${orderID}`,{
     headers: {'Authorization': `Bearer ${authToken}`}
   })
   if (res.status !== 200) {
@@ -42,7 +42,7 @@ function OrderDetailPage() {
   const navigate = useNavigate();
 
   const cancelOrderRequest = async () => {
-    const res = await fetch(`http://127.0.0.1:8000/order/${order.id}/cancel/`, {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order/${order.id}/cancel/`, {
       method: 'PATCH',
       headers: {'Authorization': `Bearer ${authState.authToken}`}
     })

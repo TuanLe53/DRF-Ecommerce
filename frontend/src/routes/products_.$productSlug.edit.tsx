@@ -19,7 +19,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
-  const res = await fetch(`http://127.0.0.1:8000/products/${productSlug}`);
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/${productSlug}`);
   if(res.status !== 200) throw new Error('Failed to fetch product')
 
   return await res.json();
@@ -116,7 +116,7 @@ function UpdateDialog({product}:SectionProps) {
     body.append('description', values.description);
     body.append('price', values.price.toString());
 
-    const res = await fetch(`http://127.0.0.1:8000/products/${product.slug}`, {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/${product.slug}`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${authState.authToken}`,
@@ -287,7 +287,7 @@ function AddDiscountDialog({productID}:DiscountDialogProps) {
 
   const {mutate:addDiscount, isPending} = useMutation({
     mutationFn: async () => {
-      const res = await fetch('http://127.0.0.1:8000/products/discount/', {
+      const res = await fetch('/products/discount/', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${authState.authToken}`,
@@ -366,7 +366,7 @@ function DeleteDiscountDialog({ productID }: DiscountDialogProps) {
 
   const {mutate:deleteDiscount, isPending} = useMutation({
     mutationFn: async () => {
-      const res = await fetch(`http://127.0.0.1:8000/products/discount/${productID}`,{
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/discount/${productID}`,{
         method: 'DELETE',
         headers: {'Authorization': `Bearer ${authState.authToken}`}
       })

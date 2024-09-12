@@ -216,7 +216,7 @@ function Register() {
 }
 
 async function register(body: any, user_type: 'VENDOR' | 'CUSTOMER') {
-  const res = await fetch(`http://127.0.0.1:8000/${user_type.toLowerCase()}/new/`, {
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/${user_type.toLowerCase()}/new/`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import React, { useState } from 'react'
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
-  const res = await fetch(`http://127.0.0.1:8000/products/${productSlug}`)
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/${productSlug}`)
   if (res.status !== 200) {
     throw new Error('Error when get data of this product. Please visit this site later.')
   }
@@ -35,7 +35,7 @@ function ProductPage() {
   const addToCart = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const res = await fetch('http://127.0.0.1:8000/customer/cart/', {
+    const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/customer/cart/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${authState.authToken}`,

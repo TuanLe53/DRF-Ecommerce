@@ -32,7 +32,7 @@ function Login() {
   });
 
   const login = async (body: z.infer<typeof loginFormSchema>) => {
-    const res = await fetch('http://127.0.0.1:8000/user/login/', {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/login/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)

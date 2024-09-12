@@ -35,7 +35,7 @@ function ProductsByCategoryCarousel({ category }: ProductsByCategoryCarouselProp
   const navigate = useNavigate({from: '/'});
 
   const fetchProducts = async ():Promise<Product[]> => {
-    const res = await fetch(`http://127.0.0.1:8000/products/?category=${category}&limit=4`);
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/?category=${category}&limit=4`);
     if(!res.ok) throw new Error('An error has occurred. Please try again later.')
     const data = await res.json();
     return data.results;

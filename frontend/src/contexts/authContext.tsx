@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         const refreshToken = localStorage.getItem('refreshToken');
 
         if (refreshToken) {            
-            const res = await fetch('http://127.0.0.1:8000/user/refresh/', {
+            const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/refresh/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refresh: refreshToken })
