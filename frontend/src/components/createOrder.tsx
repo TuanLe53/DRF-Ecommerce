@@ -68,7 +68,7 @@ export default function CreateOrder({items, disable=false}: CreateOrderProps) {
             products: items
         }
 
-        const res = await fetch("http://127.0.0.1:8000/order/", {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/order/`, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${authState.authToken}`,
@@ -191,7 +191,7 @@ function PaymentSelect({ form }: PaymentSelectProps) {
     const { authState } = useAuth();
 
     const fetchPayments = async (): Promise<Payment[]> => {
-        const res = await fetch('http://127.0.0.1:8000/payments/', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/payments/`, {
             headers: { 'Authorization': `Bearer ${authState.authToken}` }
         });
         const data = await res.json();

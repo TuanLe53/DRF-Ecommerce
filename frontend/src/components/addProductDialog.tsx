@@ -68,7 +68,7 @@ export default function AddProductDialog() {
             formData.append("categories", category);
         })
 
-        const res = await fetch('http://127.0.0.1:8000/products/', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${authState.authToken}`,
