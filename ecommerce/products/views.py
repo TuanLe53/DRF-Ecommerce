@@ -7,13 +7,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.parsers import MultiPartParser
 
 from .serializers import CategorySerializer, ProductSerializer
 from .models import Category, Product, ProductImages, Inventory, Discount
 from .permissions import IsVendor, IsProductOwner
 from .filters import ProductFilterByCategory
+from .paginations import ProductsPagination
 from vendors.models import Vendor
 
 # Create your views here.
@@ -23,8 +23,8 @@ class ListCreateCategory(generics.ListCreateAPIView):
     
 class ListCreateProduct(generics.ListCreateAPIView):
     queryset = Product.objects.all()
-    pagination_class = LimitOffsetPagination
     serializer_class = ProductSerializer
+    pagination_class = ProductsPagination
     parser_classes = [MultiPartParser]
     filter_backends =   [DjangoFilterBackend]
     filterset_class = ProductFilterByCategory
