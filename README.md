@@ -5,6 +5,10 @@ A Multi-Vendor E-commerce backend.
 - Django
 - Django REST framework
 - PostgreSQL
+- React
+- Shadcn UI
+- Tanstack Router
+- Tanstack Query
 
 
 ######
