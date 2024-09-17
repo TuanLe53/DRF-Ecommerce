@@ -1,3 +1,4 @@
+import ProductCard from '@/components/productCard';
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Product } from '@/types/product';
 import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -38,13 +39,18 @@ function ProductsByCategoryPage() {
     staleTime: 5000
   });
 
-  console.log(data)
-
+  const products = data?.results
   return (
     <div>
       <h1>{category}</h1>
-      <div>
-        <p>{data?.results[0].name}</p>
+      <div className='flex justify-center items-center'>
+        <div
+          className='w-4/5 grid grid-cols-4 gap-4 bg-red-300'
+        >
+          {products?.map((product) => (
+            <ProductCard key={product.id} product={product}/>
+          ))}
+        </div>
       </div>
       <Pagination>
         <PaginationContent>
