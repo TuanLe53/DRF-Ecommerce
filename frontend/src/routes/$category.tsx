@@ -14,7 +14,7 @@ interface FetchResult{
 }
 
 const fetchProducts = async (page: number, category: string):Promise<FetchResult> => {
-  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/?category=${category}&page=${page}`);
+  const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/?category=${category}&page=${page}&page_size=12`);
   if(!res.ok) throw new Error('An error has occurred. Please try again later.')
   return await res.json();
 }
@@ -29,7 +29,6 @@ export const Route = createFileRoute('/$category')({
 
 function ProductsByCategoryPage() {
   const { category } = Route.useParams();
-  // const queryClient = useQueryClient();
   const [page, setPage] = useState<number>(1);
 
   const { data, error, isFetching } = useQuery({
