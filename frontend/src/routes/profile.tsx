@@ -20,7 +20,7 @@ import { UserRound, CircleMinus } from 'lucide-react';
 import { useState } from 'react';
 
 const fetchProfile = async (authToken: string) => {
-    const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/user/profile/', {
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/user/profile/`, {
         headers: { 'Authorization': `Bearer ${authToken}` },
     });
 
@@ -97,7 +97,7 @@ function Cart() {
     const { authState } = useAuth();
 
     const fetchCartItems = async (): Promise<CartItem[]> => {
-        const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/customer/cart/', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/customer/cart/`, {
             headers: { 'Authorization': `Bearer ${authState.authToken}` }, 
         });
         const data = await res.json();
@@ -235,7 +235,7 @@ function Payments() {
     const { authState } = useAuth();
 
     const fetchPayments = async (): Promise<Payment[]> => {
-        const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/payments/', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/payments/`, {
             headers: { 'Authorization': `Bearer ${authState.authToken}` }
         });
         const data = await res.json();
@@ -338,7 +338,7 @@ function ProductList() {
     const { authState } = useAuth();
     
     const fetchProducts = async (): Promise<Product[]> => {
-        const res = await fetch('${import.meta.env.VITE_API_BASE_URL}/products/vendor/', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/products/vendor/`, {
             headers: { 'Authorization': `Bearer ${authState.authToken}` },
         })
         const data = await res.json();
