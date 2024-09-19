@@ -16,3 +16,9 @@ class VendorSerializer(serializers.ModelSerializer):
         
         vendor = Vendor.objects.create(user=user, **validated_data)
         return vendor
+    
+class VendorInfoSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Vendor
+        exclude = ("user", )
