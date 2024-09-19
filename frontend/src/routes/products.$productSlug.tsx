@@ -7,7 +7,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { useAuth } from '@/contexts/authContext'
 import { formattedVND } from '@/lib/formatCurrency'
 import { Product } from '@/types/product'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import React, { useState } from 'react'
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
@@ -92,6 +92,7 @@ function ProductPage() {
         {product.discount &&
           <p className='line-through'>{formattedVND(product.price)} <Badge>{product.discount}%</Badge></p>
         }
+        <p className='text-xl'>Vendor: <Link to='/vendor/$vendorID' params={{vendorID: product.vendor_id}}>{product.vendor_name}</Link></p>
         <div className='flex gap-10'>
           <p className='text-xl'>Quantity: {product.quantity}</p>
           <p className='text-xl'>Sold: {product.total_sold_items}</p>
