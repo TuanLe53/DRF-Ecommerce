@@ -15,6 +15,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRoute } from './routes/__root'
 import { Route as ProfileImport } from './routes/profile'
 import { Route as CategoryImport } from './routes/$category'
+import { Route as VendorVendorIDImport } from './routes/vendor.$vendorID'
 import { Route as ProductsProductSlugImport } from './routes/products.$productSlug'
 import { Route as OrdersOrderIDImport } from './routes/orders.$orderID'
 import { Route as ProductsProductSlugEditImport } from './routes/products_.$productSlug.edit'
@@ -57,6 +58,11 @@ const IndexLazyRoute = IndexLazyImport.update({
   path: '/',
   getParentRoute: () => rootRoute,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+
+const VendorVendorIDRoute = VendorVendorIDImport.update({
+  path: '/vendor/$vendorID',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const ProductsProductSlugRoute = ProductsProductSlugImport.update({
   path: '/products/$productSlug',
@@ -133,6 +139,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsProductSlugImport
       parentRoute: typeof rootRoute
     }
+    '/vendor/$vendorID': {
+      id: '/vendor/$vendorID'
+      path: '/vendor/$vendorID'
+      fullPath: '/vendor/$vendorID'
+      preLoaderRoute: typeof VendorVendorIDImport
+      parentRoute: typeof rootRoute
+    }
     '/products/$productSlug/edit': {
       id: '/products/$productSlug/edit'
       path: '/products/$productSlug/edit'
@@ -154,6 +167,7 @@ export const routeTree = rootRoute.addChildren({
   RegisterLazyRoute,
   OrdersOrderIDRoute,
   ProductsProductSlugRoute,
+  VendorVendorIDRoute,
   ProductsProductSlugEditRoute,
 })
 
@@ -173,6 +187,7 @@ export const routeTree = rootRoute.addChildren({
         "/register",
         "/orders/$orderID",
         "/products/$productSlug",
+        "/vendor/$vendorID",
         "/products/$productSlug/edit"
       ]
     },
@@ -199,6 +214,9 @@ export const routeTree = rootRoute.addChildren({
     },
     "/products/$productSlug": {
       "filePath": "products.$productSlug.tsx"
+    },
+    "/vendor/$vendorID": {
+      "filePath": "vendor.$vendorID.tsx"
     },
     "/products/$productSlug/edit": {
       "filePath": "products_.$productSlug.edit.tsx"
