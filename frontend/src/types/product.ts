@@ -10,7 +10,7 @@ export interface Product{
     final_price: number;
     total_sold_items: number;
     images: ProductImage[];
-    vendor: string;
+    vendor_id: string;
     vendor_name: string;
 }
 
