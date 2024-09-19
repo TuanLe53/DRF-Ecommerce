@@ -14,6 +14,8 @@ from .models import Category, Product, ProductImages, Inventory, Discount
 from .permissions import IsVendor, IsProductOwner
 from .filters import ProductFilterByCategory
 from .paginations import ProductsPagination
+
+from users.models import CustomUser
 from vendors.models import Vendor
 
 # Create your views here.
@@ -98,6 +100,17 @@ class ListProductsByID(generics.ListAPIView):
     
     def get_queryset(self):
         vendor = get_object_or_404(Vendor, user=self.request.user)
+        products = Product.objects.filter(vendor=vendor)
+        
+        return products
+    
+class ListProductsOfVendor(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = [AllowAny, ]
+    
+    def get_queryset(self):
+        user = get_object_or_404(CustomUser, id=self.kwargs["vendor_id"])
+        vendor = get_object_or_404(Vendor, user=user)
         products = Product.objects.filter(vendor=vendor)
         
         return products
