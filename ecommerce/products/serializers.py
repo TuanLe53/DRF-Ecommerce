@@ -52,10 +52,12 @@ class ProductSerializer(serializers.ModelSerializer):
     discount = serializers.CharField(source="discount.percentage", read_only=True)
     final_price = serializers.SerializerMethodField("get_final_price")
     total_sold_items = serializers.SerializerMethodField("count_sold_items")
+    vendor_name = serializers.CharField(source="vendor.shop_name", read_only=True)
+    vendor_id = serializers.CharField(source="vendor.user.id", read_only=True)
 
     class Meta: 
         model = Product
-        fields = ("id", "name", "slug", "price", "description", "categories", "quantity", "images", "discount", "final_price", "total_sold_items")
+        fields = ("id", "name", "slug", "price", "description", "categories", "quantity", "images", "discount", "final_price", "total_sold_items", "vendor_id", "vendor_name")
         lookup_field = 'slug'
         extra_kwargs = {
             "id": {"read_only": True}
