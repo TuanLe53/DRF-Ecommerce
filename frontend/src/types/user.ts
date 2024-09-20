@@ -4,6 +4,17 @@ export interface User{
     user_type: 'VENDOR' | 'CUSTOMER' | null;
 }
 
+export interface Vendor {
+    shop_name: string;
+    description: string;
+    city: string;
+    address: string;
+    phone_number: string;
+    avatar: string | undefined;
+    cover_photo: string | null;
+    closed: boolean;
+}
+
 export interface Payment{
     id: string;
     provider: string;
