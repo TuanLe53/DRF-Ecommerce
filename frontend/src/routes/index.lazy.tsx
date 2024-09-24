@@ -50,19 +50,21 @@ function ProductsByCategoryCarousel({ category }: ProductsByCategoryCarouselProp
   if(isError) return <div>Error</div>
 
   return (
-    <div className='bg-slate-200'>
+    <div className='py-1 px-2 bg-slate-200'>
       <h1 className='text-3xl'>{toTitleCase(category)}</h1>
       <div className='flex gap-5 items-center'>
         {products.map((pd) => (
           <ProductCard product={pd} key={pd.id} />
         ))}
-        <Button
-          type='button'
-          onClick={() => navigate({to:`/${category}`},)}
-          className='rounded-full w-12 h-12 bg-white border-orange-500 border-2 text-orange-500 hover:bg-orange-500 hover:text-white'
-        >
-          More
-        </Button>
+        <div className='w-56 h-80 flex items-center justify-center'>
+          <Button
+            type='button'
+            onClick={() => navigate({to:`/${category}`},)}
+            className='rounded-lg w-20 h-12 bg-white border-orange-500 border-2 text-orange-500 hover:bg-orange-500 hover:text-white'
+          >
+            More
+          </Button>
+        </div>
       </div>
     </div>
   )
