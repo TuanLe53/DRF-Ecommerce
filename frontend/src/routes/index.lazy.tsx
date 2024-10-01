@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { toTitleCase } from '@/lib/formatStyles';
 import { Product } from '@/types/product';
 import { useQuery } from '@tanstack/react-query';
-import { createLazyFileRoute, useNavigate } from '@tanstack/react-router'
+import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router'
 
 export const Route = createLazyFileRoute('/')({
   component: Index,
@@ -15,8 +15,12 @@ function Index() {
       <div className='border-black border-r-2 w-1/5'>
         <h1>Category</h1>
         <ul>
-          <li>Shirts</li>
-          <li>Sneaker</li>
+          <li>
+            <Link to='/$category' params={{category: 'shirts'}}>Shirts</Link>
+          </li>
+          <li>
+            <Link to='/$category' params={{category: 'sneaker'}}>Sneaker</Link>
+          </li>
         </ul>
       </div>
       <div className='w-4/5 flex flex-col gap-5'>
@@ -50,7 +54,7 @@ function ProductsByCategoryCarousel({ category }: ProductsByCategoryCarouselProp
   if(isError) return <div>Error</div>
 
   return (
-    <div className='py-1 px-2 bg-slate-200'>
+    <div className='py-1 px-2 bg-slate-200 rounded-lg'>
       <h1 className='text-3xl'>{toTitleCase(category)}</h1>
       <div className='flex gap-5 items-center'>
         {products.map((pd) => (
