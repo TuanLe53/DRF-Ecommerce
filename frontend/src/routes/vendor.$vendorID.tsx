@@ -28,9 +28,9 @@ function VendorPage() {
 
   return (
     <div>
-      <div className='w-3/4 bg-blue-400 mx-auto flex flex-row'>
+      <div className='w-4/5 bg-blue-400 mx-auto flex flex-row'>
         <div className='relative w-1/4'>
-          <img src={vendor.cover_photo ? vendor.cover_photo : Cover} alt='' className='object-cover w-full h-32'/>
+          <img src={vendor.cover_photo ? vendor.cover_photo : Cover} alt='' className='object-cover w-full h-36'/>
           <div className='absolute top-10 left-5'>
             <Avatar>
               <AvatarImage src={vendor.avatar} />
@@ -75,7 +75,7 @@ function ProductList({vendorID}:ProductListProps) {
   if (isError) return <div>Error</div>
   
   return (
-    <div className='w-3/4 mx-auto flex flex-row flex-wrap gap-5'>
+    <div className='w-4/5 mx-auto flex flex-row flex-wrap gap-5'>
       {products.map((pd) => (
         <ProductCard product={pd}/>
         
