@@ -28,14 +28,24 @@ function VendorPage() {
 
   return (
     <div>
-      <img src={vendor.cover_photo ? vendor.cover_photo : Cover} alt='' className='w-1/2 mx-auto'/>
-      <div className='bg-red-600 flex justify-center'>
-        <Avatar>
-          <AvatarImage src={vendor.avatar} />
-          <AvatarFallback>
-            <UserRound />
-          </AvatarFallback>
-        </Avatar>
+      <div className='w-3/4 bg-blue-400 mx-auto flex flex-row'>
+        <div className='relative w-1/4'>
+          <img src={vendor.cover_photo ? vendor.cover_photo : Cover} alt='' className='object-cover w-full h-32'/>
+          <div className='absolute top-10 left-5'>
+            <Avatar>
+              <AvatarImage src={vendor.avatar} />
+              <AvatarFallback>
+                <UserRound />
+              </AvatarFallback>
+            </Avatar>
+          </div>
+        </div>
+        <div>
+          <p>{vendor.shop_name}</p>
+          <p>{vendor.city}</p>
+          <p>{vendor.address}</p>
+          <p>{vendor.phone_number}</p>
+        </div>
       </div>
       <ProductList vendorID={vendorID} />
     </div>
