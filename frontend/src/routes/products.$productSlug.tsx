@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/authContext'
 import { formattedVND } from '@/lib/formatCurrency'
 import { Product } from '@/types/product'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { CircleAlert } from 'lucide-react'
 import React, { useState } from 'react'
 
 const fetchProduct = async (productSlug: string): Promise<Product> => {
@@ -102,7 +103,7 @@ function ProductPage() {
           <p>{product.description}</p>
         </div>
 
-        {isRenderButton &&
+        {isRenderButton ?
           <>
           <form className='flex w-1/4' onSubmit={addToCart}>
               <Input
@@ -118,6 +119,11 @@ function ProductPage() {
             <Button type='submit'>Add to cart</Button>
           </form>
           </>
+          :
+          <div className='flex gap-1 items-center text-red-600'>
+            <CircleAlert className='h-4 w-4'/>
+            <p>You need to log in as a customer to buy this product.</p>
+          </div>
         }
 
       </div>
