@@ -75,8 +75,7 @@ function ProductList({vendorID}:ProductListProps) {
   if (isError) return <div>Error</div>
   
   return (
-    <div>
-      <p>Product List</p>
+    <div className='w-3/4 mx-auto flex flex-row flex-wrap gap-5'>
       {products.map((pd) => (
         <ProductCard product={pd}/>
         
