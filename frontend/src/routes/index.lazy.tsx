@@ -13,12 +13,12 @@ function Index() {
   return (
     <div className='flex gap-10 p-5'>
       <div className='border-black border-r-2 w-1/5'>
-        <h1>Category</h1>
+        <h1 className='text-3xl'>Category</h1>
         <ul>
-          <li>
+          <li className='hover:underline'>
             <Link to='/$category' params={{category: 'shirts'}}>Shirts</Link>
           </li>
-          <li>
+          <li className='hover:underline'>
             <Link to='/$category' params={{category: 'sneaker'}}>Sneaker</Link>
           </li>
         </ul>
@@ -55,7 +55,7 @@ function ProductsByCategoryCarousel({ category }: ProductsByCategoryCarouselProp
 
   return (
     <div className='py-1 px-2 bg-slate-200 rounded-lg'>
-      <h1 className='text-3xl'>{toTitleCase(category)}</h1>
+      <h1 className='text-3xl pb-1'>{toTitleCase(category)}</h1>
       <div className='flex gap-5 items-center'>
         {products.map((pd) => (
           <ProductCard product={pd} key={pd.id} />
