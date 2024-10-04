@@ -28,7 +28,6 @@ function RootComponent() {
       <div className='h-12 p-1 flex bg-red-200 items-center justify-between'>
         <div className='flex gap-2'>
           <Link to='/' className='text-lg [&.active]:font-bold'>Home</Link>
-          <Link to='/about' className='text-lg [&.active]:font-bold'>About</Link>
         </div>
         {authState.isAuth ?
           <div className='flex'>
