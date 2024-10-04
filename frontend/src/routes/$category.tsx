@@ -1,7 +1,7 @@
 import ProductCard from '@/components/productCard';
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Product } from '@/types/product';
-import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { createFileRoute, notFound } from '@tanstack/react-router'
 import { useState } from 'react';
 
@@ -33,7 +33,7 @@ function ProductsByCategoryPage() {
   const [page, setPage] = useState<number>(1);
 
   const { data, error, isFetching } = useQuery({
-    queryKey: ['productsByCategory', page],
+    queryKey: ['productsByCategory', page, category],
     queryFn: () => fetchProducts(page, category),
     placeholderData: keepPreviousData,
     staleTime: 5000
