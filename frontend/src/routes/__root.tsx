@@ -29,7 +29,7 @@ function RootComponent() {
       <div className='h-12 p-1 flex bg-red-200 items-center justify-between'>
         <div className='flex gap-2'>
           <Link to='/' className='text-lg [&.active]:font-bold'>Home</Link>
-          <CategoryDropDown />
+          <CategoryDropDownMenu />
         </div>
         {authState.isAuth ?
           <div className='flex'>
@@ -52,7 +52,7 @@ function RootComponent() {
   )
 }
 
-function CategoryDropDown() {
+function CategoryDropDownMenu() {
   const navigate = useNavigate();
 
   return (
